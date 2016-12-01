@@ -217,13 +217,16 @@ def main():
 			myriaDeploy.terminate()
 			subp.call('killall java', shell=True)
 
-		#imprime a lista de cenários com a média
-		#de tempo das rodadas de consultas para
-		#cada cenário
-		print(avgTime)
+		n = n * 2
 
-		#salva resultado em arquivo json
-		writeJson(path+'result.json',avgTime)
+	#imprime a lista de cenários com a média
+	#de tempo das rodadas de consultas para
+	#cada cenário
+	print(avgTime)
+
+	#salva resultado em arquivo json
+	writeJson(path+'result.json',avgTime)
+
 
 if __name__ == "__main__": main()
 
