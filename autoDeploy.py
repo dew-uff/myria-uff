@@ -57,11 +57,11 @@ def ingest_and_query(schema,path):
 
 #funcao que executa um comando shell e retorna um json
 def callPopen(cmd):
-    pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
-    time.sleep(10)
-    outPipe = pipe.stdout.read()
-    out = json.loads(outPipe[outPipe.find('{',0):])
-    return out
+	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
+	time.sleep(300)
+	outPipe = pipe.stdout.read()
+	out = json.loads(outPipe[outPipe.find('{',0):])
+	return out
 
 #função para capturar a informação inicial
 def getInfo():
@@ -89,7 +89,7 @@ def getInfo():
 	path = getPath.stdout.read()
 	path = path.replace('\n','')+'/myria/'
 
-	return lMaq, listDN, hostname, path
+	return listDN, lMaq, hostname, path
 
 #funcao que le o arquivo de entrada e retorna 
 #o path e a lista de workers
@@ -138,45 +138,50 @@ def main():
 
 		#prepara o deploy
 		prepareDeploy(path, hostname,listDeploy,17000)
+		print(path,hostname,listDeploy,listDN)
 
 		#gera cenarios 
 		dn = 2
 		schemas = []
-		while (dn <= n):
+		while ((dn <= n) and (dn <= len(listDN))):
 			data = {'wn':n-dn,'dn':dn}
 			schemas.append(data)
 			dn = dn * 2
 
 		###Variaveis com comandos
-		deploy = ['./launch_local_cluster',str(n)]
-		walive = ['curl', 'localhost:8753/workers/alive']
-		ingest = ['curl -i -XPOST localhost:8753/dataset -H \"Content-type: application/json\" -d @./ingest_twitter.json']
-		query = ['curl -i -XPOST localhost:8753/query -H \"Content-type: application/json\"  -d @./global_join.json']
-		getQuery = ['curl -i -XGET localhost:8753/query/query-']
+		deploy = ['./launch_local_cluster']
+		walive = ['curl '+hostname+':8753/workers/alive']
+		ingest = ['curl -i -XPOST '+hostname+':8753/dataset -H \"Content-type: application/json\" -d @./ingest_twitter.json']
+		query = ['curl -i -XPOST '+hostname+':8753/query -H \"Content-type: application/json\"  -d @./global_join.json']
+		getQuery = ['curl -i -XGET '+hostname+':8753/query/query-']
 		avgTime = []
 
 		#para cada cenário gerado
 		for s in schemas:
 			
 			#Limpa diretório tmp do master e de todos os nós
-			subp.call('rm -Rf /tmp/myria/*', shell=True)
-			for n in listDN:
-				subp.call('ssh '+n+' \'rm -Rf /tmp/myria/*\'', shell=True)
-
+			subp.call('rm -Rf /var/usuarios/frankwrs/myria/*', shell=True)
+			for node in listDN:
+				subp.call('ssh '+node+' \'rm -Rf /var/usuarios/frankwrs/myria/*\'', shell=True)
+			print(s)
 			#seta o diretorio de deploy
 			os.chdir(path+"myriadeploy/")
 			#Faz deploy do myria com a quantidade de nós passada como argumento
-			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE)
+			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
 			#tempo de espera do deploy
-			time.sleep(40)
+			time.sleep(60)
 			#captura os workers ativos
-			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True)
+			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			workers = ws.stdout.read()
 			w = str(list(range(1,n+1))).replace(' ','')
+			print(workers)
 			#testa se os workers estao todos ativos
 			while (w not in str(workers)):
+				print(workers)
 				ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True)
 				workers = ws.stdout.read()
+			
+			print(workers)	
 			#seta o diretorio do ingest e query
 			os.chdir(path+"jsonQueries/triangles_twitter/")
 
@@ -185,23 +190,26 @@ def main():
 
 			#pipe Ingest
 			outIngest = callPopen(ingest)
-
+			#break
+						
 			#pipe query
 			x = 0
 			queryResult = []
-			while x < 5:
+			while x < 1:
 				outQuery = callPopen(query)
 				#print(outQuery['status'])
 				if outQuery['status'] == 'ACCEPTED':
+					print(outQuery['status'])
 					queryResult.append({'queryId': outQuery['queryId']})
 					x+=1
 
 			#pipe query time
 			for q in queryResult:
-				getQuery = "curl -i -XGET localhost:8753/query/query-"+str(q['queryId'])
+				getQuery = 'curl -i -XGET '+hostname+':8753/query/query-'+str(q['queryId'])
 				outGetQuery = callPopen(getQuery)
-
+				
 				while (outGetQuery['status'] != 'SUCCESS'):
+					print(getQuery)
 					outGetQuery = callPopen(getQuery)
 				#Subtração dos tempos de start e finish da query
 				st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:].replace('Z','')
@@ -212,12 +220,13 @@ def main():
 
 			#lista com a média de tempo das consultas pra cada cenário
 			avgTime.append({'schema': s, 'query': queryResult, 'avgTime': float("{0:.3f}".format(sum(q['time'] for q in queryResult) / len(queryResult)))})
-
+			
 			#Mata processo de deploy e java levantados
 			myriaDeploy.terminate()
 			subp.call('killall java', shell=True)
 
 		n = n * 2
+		#n = len(listMaq)+1
 
 	#imprime a lista de cenários com a média
 	#de tempo das rodadas de consultas para
