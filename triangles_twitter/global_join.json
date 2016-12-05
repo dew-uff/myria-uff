@@ -1,0 +1,143 @@
+{
+   "language": "datalog",
+   "logicalRa": "Parallel[Store(valmeida:triangles:join_twitter)[Apply(x=$0,z=$3)[Join(($1 = $2))[Scan(valmeida:triangles:twitter),Scan(valmeida:triangles:twitter)]]]]",
+   "profilingMode": [],
+   "rawQuery": "A(x,z) :- R(x,y), R(y,z)",
+   "plan": {
+      "type": "SubQuery",
+      "fragments": [
+         {
+            "workers": [
+               1,
+               2
+            ],
+            "operators": [
+               {
+                  "opId": 0,
+                  "opType": "LocalMultiwayConsumer",
+                  "argOperatorId": 1,
+                  "opName": "MyriaSplitConsumer"
+               },
+               {
+                  "relationKey": {
+                     "relationName": "join_twitter",
+                     "programName": "triangles",
+                     "userName": "valmeida"
+                  },
+                  "opId": 2,
+                  "argOverwriteTable": true,
+                  "opType": "DbInsert",
+                  "partitionFunction": null,
+                  "opName": "MyriaStore(public:adhoc:A)",
+                  "argChild": 0
+               }
+            ]
+         },
+         {
+            "workers": [
+               1,
+               2
+            ],
+            "operators": [
+               {
+                  "opId": 3,
+                  "opType": "ShuffleConsumer",
+                  "argOperatorId": 4,
+                  "opName": "MyriaShuffleConsumer"
+               },
+               {
+                  "opId": 5,
+                  "opType": "ShuffleConsumer",
+                  "argOperatorId": 6,
+                  "opName": "MyriaShuffleConsumer"
+               },
+               {
+                  "argChild2": "3",
+                  "argColumnNames": [
+                     "follower",
+                     "followee"
+                  ],
+                  "opName": "MyriaSymmetricHashJoin(($1 = $2); $0,$3)",
+                  "argColumns2": [
+                     0
+                  ],
+                  "opId": 7,
+                  "argSelect1": [
+                     0
+                  ],
+                  "opType": "SymmetricHashJoin",
+                  "argChild1": "5",
+                  "argColumns1": [
+                     1
+                  ],
+                  "argSelect2": [
+                     1
+                  ]
+               },
+               {
+                  "opId": 1,
+                  "opType": "LocalMultiwayProducer",
+                  "opName": "MyriaSplitProducer",
+                  "argChild": 7
+               }
+            ]
+         },
+         {
+            "workers": [
+               1,
+               2
+            ],
+            "operators": [
+               {
+                  "opId": 8,
+                  "relationKey": {
+                     "relationName": "twitter",
+                     "programName": "triangles",
+                     "userName": "valmeida"
+                  },
+                  "opType": "TableScan",
+                  "opName": "MyriaScan(public:adhoc:R)"
+               },
+               {
+                  "opId": 6,
+                  "opType": "ShuffleProducer",
+                  "argPf": {
+                     "type": "SingleFieldHash",
+                     "index": 1
+                  },
+                  "opName": "MyriaShuffleProducer(h($1))",
+                  "argChild": 8
+               }
+            ]
+         },
+         {
+            "workers": [
+               1,
+               2
+            ],
+            "operators": [
+               {
+                  "opId": 9,
+                  "relationKey": {
+                     "relationName": "twitter",
+                     "programName": "triangles",
+                     "userName": "valmeida"
+                  },
+                  "opType": "TableScan",
+                  "opName": "MyriaScan(public:adhoc:R)"
+               },
+               {
+                  "opId": 4,
+                  "opType": "ShuffleProducer",
+                  "argPf": {
+                     "type": "SingleFieldHash",
+                     "index": 0
+                  },
+                  "opName": "MyriaShuffleProducer(h($0))",
+                  "argChild": 9
+               }
+            ]
+         }
+      ]
+   }
+}
