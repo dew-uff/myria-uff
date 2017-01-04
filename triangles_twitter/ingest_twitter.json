@@ -1,0 +1,26 @@
+{
+   "delimiter": " ",
+   "workers": [
+      1,
+      2
+   ],
+   "relationKey": {
+      "relationName": "twitter",
+      "programName": "triangles",
+      "userName": "valmeida"
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/triangles_twitter/twitter_small.csv"
+   },
+   "schema": {
+      "columnNames": [
+         "follower",
+         "followee"
+      ],
+      "columnTypes": [
+         "LONG_TYPE",
+         "LONG_TYPE"
+      ]
+   }
+}
