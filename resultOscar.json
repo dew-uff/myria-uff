@@ -1,22 +1,10 @@
 [
    {
       "avgTime": 22.084,
-      "query": [
-         {
-            "time": 27.973,
-            "queryId": 2
-         },
-         {
-            "time": 24.078,
-            "queryId": 3
-         },
-         {
-            "time": 19.295,
-            "queryId": 4
-         },
-         {
-            "time": 19.257,
-            "queryId": 5
+      "query": [{"time": 27.973,"queryId": 2},
+				{"time": 24.078,"queryId": 3},
+				{"time": 19.295,"queryId": 4},
+				{"time": 19.257,"queryId": 5
          },
          {
             "time": 19.817,

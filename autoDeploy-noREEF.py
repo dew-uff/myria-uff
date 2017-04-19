@@ -1,7 +1,12 @@
+
+# coding: utf-8
+
+# In[ ]:
+
 #Algoritmo para teste do Serviço Myria
 #Professores: Vanessa e Victor
 #Aluno: Frank Willian
-#Programa de Pós-Graduãção IC/UFF-NI/RJ-BR
+#Programa de Pós-Graduãção IC/UFF/NI-RJ-BR
 
 import json
 import subprocess as subp
@@ -9,51 +14,65 @@ import os
 import time
 import datetime
 
+
+# In[ ]:
+
 #funcao para escrever em json
 def writeJson(path,js):
-    file = open(path, 'w')
-    file.write(json.dumps(js,indent = 3))
-    file.close()
+	file = open(path, 'w')
+	file.write(json.dumps(js,indent = 3))
+	file.close()
+
+
+# In[ ]:
 
 #funcao para alterar o json da consulta
-def alter_join(dn,wn,path):
-    path = path+'jsonQueries/triangles_twitter/global_join.json'
-    ingest = open(path,'r')
-    data = json.load(ingest)
-    ingest.close()
-    for frag in data['plan']['fragments']:
-        for op in frag['operators']:
-            if (op['opType'] == 'TableScan'):
-                frag['workers'] = dn
-                break
-            else:
-                frag['workers'] = wn
-                break
-    writeJson(path,data)
+def alter_join(wn,cn,path):
+	path = path+'jsonQueries/triangles_twitter/global_join.json'
+	ingest = open(path,'r')
+	data = json.load(ingest)
+	ingest.close()
+	for frag in data['plan']['fragments']:
+		for op in frag['operators']:
+			if (op['opType'] == 'TableScan'):
+				frag['workers'] = wn
+				break
+			else:
+				frag['workers'] = cn
+			break
+	writeJson(path,data)
+
+
+# In[ ]:
 
 #funcao para alterar o json do ingest
-def alter_ingest(dn,path):
-    path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
-    ingest = open(path_,'r')
-    data = json.load(ingest)
-    ingest.close()
-    data['workers'] = dn
-    data['source']['filename'] = path+'jsonQueries/triangles_twitter/twitter_small.csv'
-    writeJson(path_,data)
+def alter_ingest(wn,path):
+	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
+	ingest = open(path_,'r')
+	data = json.load(ingest)
+	ingest.close()
+	data['workers'] = wn
+	data['source']['filename'] = path+'jsonQueries/triangles_twitter/twitter_small.csv'
+	writeJson(path_,data)
+
+
+# In[ ]:
 
 #funcao que alterar os json de ingest e query de acordo
 #com o cenario
 def ingest_and_query(schema,path):
 	#ingest
-	dn = list(range(1,schema['dn']+1))
-	alter_ingest(dn,path)
+	wn = list(range(1,schema['wn']+1))
+	alter_ingest(wn,path)
 	#join
-	if (schema['wn']==0):
-		wn = dn
+	if (schema['cn']==0):
+		cn = wn
 	else: 
-		wn = list(range(1,schema['dn']+schema['wn']+1))
+		cn = list(range(1,schema['wn']+schema['cn']+1))
+	alter_join(wn,cn,path)
 
-	alter_join(dn,wn,path)        
+
+# In[ ]:
 
 #funcao que executa um comando shell e retorna um json
 def callPopen(cmd):
@@ -63,6 +82,8 @@ def callPopen(cmd):
 	out = json.loads(outPipe[outPipe.find('{',0):])
 	return out
 
+# In[ ]:
+
 #função para capturar a informação inicial
 def getInfo():
 	#Captura lista de maquinas
@@ -70,32 +91,29 @@ def getInfo():
 	machines = subp.Popen(getListMaq, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
 	lMaq = machines.stdout.read()
 	lMaq = lMaq.replace('\n',' ').split()
-	listDN = list(set(lMaq))
-
-	#captura o nome do host
-	hostname ='hostname'
-	getHost = subp.Popen(hostname, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
-	hostname = getHost.stdout.read()
-	hostname = hostname.replace('\n','')
-
+	listWN = list(set(lMaq))
+	
+	#Define a primeira maquina da lista como master	
+	master = lMaq[0]
+	
 	#Remove o hostname (master) da lista de nós
-	while hostname in lMaq:
-		lMaq.remove(hostname)
-	listDN.remove(hostname)
+	while master in lMaq:
+		lMaq.remove(master)
+	listWN.remove(master)
+	
+	#define o path myria_home
+	path ='/home_nfs/frankwrs/myria/'
 
-	#captura o path
-	path ='pwd'
-	getPath = subp.Popen(path, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
-	path = getPath.stdout.read()
-	path = path.replace('\n','')+'/myria/'
+	return listWN, lMaq, master, path
 
-	return listDN, lMaq, hostname, path
+
+# In[ ]:
 
 #funcao que le o arquivo de entrada e retorna 
 #o path e a lista de workers
 def prepareDeploy(path, master,listDeploy,port):
 	#Captura arquivo de deploy	
-	file = open(path+'myriadeploy/deployment.cfg.local', 'r')
+	file = open(path+'myriadeploy/deployment.cfg', 'r')
 	lines = file.readlines()
 	file.close()
 
@@ -104,21 +122,24 @@ def prepareDeploy(path, master,listDeploy,port):
 	lines.insert(lines.index('[master]\n')+1,'0 = '+master+':'+str(port)+'\n')
 
 	#altera workers
-	del lines [lines.index('[workers]\n')+1:lines.index('[runtime]\n')-1]
+	del lines [lines.index('[workers]\n')+1:len(lines)-1]
 	x = 1
 	for w in listDeploy:
 		lines.insert(x+lines.index('[workers]\n'),w+'\n')
 		x += 1
 
 	#Grava arquivo de deploy
-	file = open(path+'myriadeploy/deployment.cfg.local', 'w')
+	file = open(path+'myriadeploy/deployment.cfg', 'w')
 	file.write(''.join(lines))
 	file.close()
+
+
+# In[ ]:
 
 def main():
 
 	#Obtem lista de maquinas, hostname e path
-	listDN, listMaq, hostname, path = getInfo()
+	listWN, listMaq, master, path = getInfo()
 
 	#Constroi os cenarios
 	#Faz deploy do serviço para cada cenarios
@@ -132,44 +153,47 @@ def main():
 		listDeploy = []
 		x = 0
 		while (x<n):
-			listDeploy.append(str(x+1)+' = '+str(listDN[x%len(listDN)])+':'+str(port))            
+			listDeploy.append(str(x+1)+' = '+str(listWN[x%len(listWN)])+':'+str(port))            
 			x+=1
 			port+=1	
 
 		#prepara o deploy
-		prepareDeploy(path, hostname,listDeploy,17000)
-		print(path,hostname,listDeploy,listDN)
+		prepareDeploy(path, master,listDeploy,17000)
+		print(path,master,listDeploy,listWN)
 
 		#gera cenarios 
-		dn = 2
+		wn = 2
 		schemas = []
-		while ((dn <= n) and (dn <= len(listDN))):
-			data = {'wn':n-dn,'dn':dn}
+		while ((wn <= n) and (wn <= len(listWN))):
+			data = {'cn':n-dn,'wn':dn}
 			schemas.append(data)
-			dn = dn * 2
+			wn = wn * 2
 
 		###Variaveis com comandos
-		deploy = ['./launch_local_cluster']
-		walive = ['curl '+hostname+':17000/workers/alive']
-		ingest = ['curl -i -XPOST '+hostname+':17000/dataset -H \"Content-type: application/json\" -d @./ingest_twitter.json']
-		query = ['curl -i -XPOST '+hostname+':17000/query -H \"Content-type: application/json\"  -d @./global_join.json']
-		getQuery = ['curl -i -XGET '+hostname+':17000/query/query-']
+		setup_cluster = ['./setup_cluster.py deployment.cfg']
+		deploy = ['./launch_cluster.sh deployment.cfg']
+		walive = ['curl '+master+':8753/workers/alive']
+		ingest = ['curl -i -XPOST '+master+':8753/dataset -H \"Content-type: application/json\" -d @./ingest_twitter.json']
+		query = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\"  -d @./global_join.json']
+		getQuery = ['curl -i -XGET '+master+':8753/query/query-']
 		avgTime = []
 
 		#para cada cenário gerado
 		for s in schemas:
 			
 			#Limpa diretório tmp do master e de todos os nós
-			subp.call('rm -Rf /var/usuarios/frankwrs/myria/*', shell=True)
+			subp.call('rm -Rf /var/usuarios/frankwrs/myria-files/*', shell=True)
 			for node in listDN:
-				subp.call('ssh '+node+' \'rm -Rf /var/usuarios/frankwrs/myria/*\'', shell=True)
+				subp.call('ssh '+node+' \'rm -Rf /var/usuarios/frankwrs/myria-files/*\'', shell=True)
 			print(s)
 			#seta o diretorio de deploy
 			os.chdir(path+"myriadeploy/")
+			#configura as máquinas para o deploy
+			setupMyria = subp.Popen(setup_cluster, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			#Faz deploy do myria com a quantidade de nós passada como argumento
 			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
 			#tempo de espera do deploy
-			time.sleep(60)
+			time.sleep(10)
 			#captura os workers ativos
 			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			workers = ws.stdout.read()
@@ -223,10 +247,11 @@ def main():
 			
 			#Mata processo de deploy e java levantados
 			myriaDeploy.terminate()
-			subp.call('killall java', shell=True)
+			os.chdir(path+"myriadeploy/")
+			subp.call('./stop_all_by_force.py deployment.cfg', shell=True)
 
-		n = n * 2
-		#n = len(listMaq)+1
+		#n = n * 2
+		n = len(listMaq)+1
 
 	#imprime a lista de cenários com a média
 	#de tempo das rodadas de consultas para
@@ -236,6 +261,8 @@ def main():
 	#salva resultado em arquivo json
 	writeJson(path+'result.json',avgTime)
 
+
+# In[ ]:
 
 if __name__ == "__main__": main()
 
