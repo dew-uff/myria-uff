@@ -159,8 +159,13 @@ def main():
 
 		#prepara o deploy
 		prepareDeploy(path, master,listDeploy,17000)
-		print(path,master,listDeploy,listWN)
-
+		print("Path: ",path)
+		print("Master: ",master)
+		print("ListDeploy: ",listDeploy)
+		print("ListWN: ",listWN)
+		
+		'''
+		
 		#gera cenarios 
 		wn = 2
 		schemas = []
@@ -168,7 +173,7 @@ def main():
 			data = {'cn':n-dn,'wn':dn}
 			schemas.append(data)
 			wn = wn * 2
-
+		
 		###Variaveis com comandos
 		setup_cluster = ['./setup_cluster.py deployment.cfg']
 		deploy = ['./launch_cluster.sh deployment.cfg']
@@ -190,10 +195,14 @@ def main():
 			os.chdir(path+"myriadeploy/")
 			#configura as máquinas para o deploy
 			setupMyria = subp.Popen(setup_cluster, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
+			while setupMyria.poll() is None:
+				print("Setup_cluster working...")
+				sleep(3);
 			#Faz deploy do myria com a quantidade de nós passada como argumento
 			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
-			#tempo de espera do deploy
-			time.sleep(10)
+			while myriaDeploy.poll() is None:
+				print("Deploy working...")
+				sleep(3);
 			#captura os workers ativos
 			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			workers = ws.stdout.read()
@@ -247,19 +256,23 @@ def main():
 			
 			#Mata processo de deploy e java levantados
 			myriaDeploy.terminate()
+			
+			'''
+			
 			os.chdir(path+"myriadeploy/")
 			subp.call('./stop_all_by_force.py deployment.cfg', shell=True)
 
 		#n = n * 2
+		
 		n = len(listMaq)+1
 
 	#imprime a lista de cenários com a média
 	#de tempo das rodadas de consultas para
 	#cada cenário
-	print(avgTime)
+	#print(avgTime)
 
 	#salva resultado em arquivo json
-	writeJson(path+'result.json',avgTime)
+	#writeJson(path+'result.json',avgTime)
 
 
 # In[ ]:
