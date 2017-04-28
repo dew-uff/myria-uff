@@ -95,6 +95,10 @@
                     "opId": "SP3",
                     "opType": "ShuffleProducer"
                 }
+            ],
+            "workers": [
+                "1",
+                "2"
             ]
         },
         {
@@ -163,6 +167,10 @@
                     "opId": "CP1",
                     "opType": "CollectProducer"
                 }
+            ],
+            "workers": [
+                "1",
+                "2"
             ]
         },
         {
