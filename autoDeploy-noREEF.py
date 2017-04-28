@@ -75,22 +75,31 @@ def ingest_and_query(schema,path):
 # In[ ]:
 
 #funcao que executa um comando shell e retorna um json
-def callPopen(cmd):
+def callIngest(cmd):
 	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
-	time.sleep(300)
+	while pipe.poll() is None:
+		time.sleep(3)
 	outPipe = pipe.stdout.read()
-	out = json.loads(outPipe[outPipe.find('{',0):])
-	return out
+	if 'Created' in outPipe:
+		while 'relationKey' not in outPipe:
+			time.sleep(3)
+			outPipe = pipe.stdout.read()
+			print(outPipe)
+		out = json.loads(outPipe[outPipe.find('{',0):])
+		return out
+	else:
+		return outPipe
 
 # In[ ]:
 
 #função para capturar a informação inicial
 def getInfo():
 	#Captura lista de maquinas
-	getListMaq ='cat $PBS_NODEFILE'
-	machines = subp.Popen(getListMaq, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
-	lMaq = machines.stdout.read()
-	lMaq = lMaq.replace('\n',' ').split()
+	#getListMaq ='cat $PBS_NODEFILE'
+	#machines = subp.Popen(getListMaq, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
+	#lMaq = machines.stdout.read()
+	#lMaq = lMaq.replace('\n',' ').split()
+	lMaq = [line.rstrip('\n') for line in open('/home_nfs/frankwrs/listMaq.txt')]
 	listWN = list(set(lMaq))
 	
 	#Define a primeira maquina da lista como master	
@@ -122,7 +131,7 @@ def prepareDeploy(path, master,listDeploy,port):
 	lines.insert(lines.index('[master]\n')+1,'0 = '+master+':'+str(port)+'\n')
 
 	#altera workers
-	del lines [lines.index('[workers]\n')+1:len(lines)-1]
+	del lines [lines.index('[workers]\n')+1:len(lines)]
 	x = 1
 	for w in listDeploy:
 		lines.insert(x+lines.index('[workers]\n'),w+'\n')
@@ -152,9 +161,8 @@ def main():
 		#Gera lista de nós/nucleos para o deploy
 		listDeploy = []
 		x = 0
-		while (x<n):
+		for x in range(0,n):
 			listDeploy.append(str(x+1)+' = '+str(listWN[x%len(listWN)])+':'+str(port))            
-			x+=1
 			port+=1	
 
 		#prepara o deploy
@@ -164,13 +172,11 @@ def main():
 		print("ListDeploy: ",listDeploy)
 		print("ListWN: ",listWN)
 		
-		'''
-		
 		#gera cenarios 
 		wn = 2
 		schemas = []
 		while ((wn <= n) and (wn <= len(listWN))):
-			data = {'cn':n-dn,'wn':dn}
+			data = {'cn':n-wn,'wn':wn}
 			schemas.append(data)
 			wn = wn * 2
 		
@@ -183,13 +189,19 @@ def main():
 		getQuery = ['curl -i -XGET '+master+':8753/query/query-']
 		avgTime = []
 
+		#sshUFF0 = subp.Popen('ssh uff0', stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
+		#while sshUFF0.poll() is None:
+		#	time.sleep(3)
+		#print(sshUFF0.stderr.read())
+		#print(sshUFF0.stdout.read())
+		
 		#para cada cenário gerado
 		for s in schemas:
 			
 			#Limpa diretório tmp do master e de todos os nós
-			subp.call('rm -Rf /var/usuarios/frankwrs/myria-files/*', shell=True)
-			for node in listDN:
-				subp.call('ssh '+node+' \'rm -Rf /var/usuarios/frankwrs/myria-files/*\'', shell=True)
+			subp.call('rm -rf /var/usuarios/frankwrs/myria-files/*', shell=True)
+			for node in listWN:
+				subp.call('ssh '+node+' \'rm -rf /var/usuarios/frankwrs/myria-files/*\'', shell=True)
 			print(s)
 			#seta o diretorio de deploy
 			os.chdir(path+"myriadeploy/")
@@ -197,24 +209,27 @@ def main():
 			setupMyria = subp.Popen(setup_cluster, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			while setupMyria.poll() is None:
 				print("Setup_cluster working...")
-				sleep(3);
+				time.sleep(5)
+			
 			#Faz deploy do myria com a quantidade de nós passada como argumento
 			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
 			while myriaDeploy.poll() is None:
 				print("Deploy working...")
-				sleep(3);
+				time.sleep(3);
+			
 			#captura os workers ativos
 			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			workers = ws.stdout.read()
-			w = str(list(range(1,n+1))).replace(' ','')
-			print(workers)
+			#print(workers)
 			#testa se os workers estao todos ativos
-			while (w not in str(workers)):
-				print(workers)
-				ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
-				workers = ws.stdout.read()
+			for x in range(1,n+1):
+				if str(x) not in workers:
+					print(workers)
+					ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
+					workers = ws.stdout.read()
 			
 			print(workers)	
+			
 			#seta o diretorio do ingest e query
 			os.chdir(path+"jsonQueries/triangles_twitter/")
 
@@ -222,23 +237,27 @@ def main():
 			ingest_and_query(s,path)
 
 			#pipe Ingest
-			outIngest = callPopen(ingest)
-			#break
-						
+			outIngest = callIngest(ingest)
+			print(outIngest)
+							
 			#pipe query
-			x = 0
 			queryResult = []
-			while x < 1:
+			for x in range(1,2):
+				queryPipe = subp.Popen(query, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
+				while queryPipe.poll() is None:
+					time.sleep(3)
+				print(queryPipe.stdout.read())
+				'''
 				outQuery = callPopen(query)
 				#print(outQuery['status'])
 				if outQuery['status'] == 'ACCEPTED':
 					print(outQuery['status'])
 					queryResult.append({'queryId': outQuery['queryId']})
-					x+=1
-
+			print(queryResult)
+			
 			#pipe query time
 			for q in queryResult:
-				getQuery = 'curl -i -XGET '+hostname+':8753/query/query-'+str(q['queryId'])
+				getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(q['queryId'])
 				outGetQuery = callPopen(getQuery)
 				
 				while (outGetQuery['status'] != 'SUCCESS'):
@@ -257,10 +276,10 @@ def main():
 			#Mata processo de deploy e java levantados
 			myriaDeploy.terminate()
 			
-			'''
+		'''
 			
-			os.chdir(path+"myriadeploy/")
-			subp.call('./stop_all_by_force.py deployment.cfg', shell=True)
+		os.chdir(path+"myriadeploy/")
+		subp.call('./stop_all_by_force.py deployment.cfg', shell=True)
 
 		#n = n * 2
 		
