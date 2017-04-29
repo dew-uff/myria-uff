@@ -10,9 +10,10 @@
 
 import json
 import subprocess as subp
-import os 
+import os
 import time
 import datetime
+import matplotlib.pyplot as plt
 
 
 # In[ ]:
@@ -28,11 +29,11 @@ def writeJson(path,js):
 
 #funcao para alterar o json da consulta
 def alter_join(wn,cn,path):
-	path = path+'jsonQueries/triangles_twitter/global_join.json'
+	path = path+'jsonQueries/triangles_twitter/triangle_join.json'
 	ingest = open(path,'r')
 	data = json.load(ingest)
 	ingest.close()
-	for frag in data['plan']['fragments']:
+	for frag in data['fragments']:
 		for op in frag['operators']:
 			if (op['opType'] == 'TableScan'):
 				frag['workers'] = wn
@@ -67,14 +68,14 @@ def ingest_and_query(schema,path):
 	#join
 	if (schema['cn']==0):
 		cn = wn
-	else: 
+	else:
 		cn = list(range(1,schema['wn']+schema['cn']+1))
 	alter_join(wn,cn,path)
 
 
 # In[ ]:
 
-#funcao que executa um comando shell e retorna um json
+#funcao que executa chama o ingest e retorna um json
 def callIngest(cmd):
 	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
 	while pipe.poll() is None:
@@ -92,6 +93,17 @@ def callIngest(cmd):
 
 # In[ ]:
 
+#funcao que executa executa a query e retorna um json
+def callQuery(cmd):
+	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
+	while pipe.poll() is None:
+		time.sleep(3)
+	outPipe = pipe.stdout.read()
+	out = json.loads(outPipe[outPipe.find('{',0):])
+	return out
+
+# In[ ]:
+
 #função para capturar a informação inicial
 def getInfo():
 	#Captura lista de maquinas
@@ -99,29 +111,30 @@ def getInfo():
 	#machines = subp.Popen(getListMaq, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
 	#lMaq = machines.stdout.read()
 	#lMaq = lMaq.replace('\n',' ').split()
-	lMaq = [line.rstrip('\n') for line in open('/home_nfs/frankwrs/listMaq.txt')]
+	pwd = '/home_nfs/frankwrs/'
+	lMaq = [line.rstrip('\n') for line in open(pwd+'listMaq.txt')]
 	listWN = list(set(lMaq))
-	
-	#Define a primeira maquina da lista como master	
+
+	#Define a primeira maquina da lista como master
 	master = lMaq[0]
-	
+
 	#Remove o hostname (master) da lista de nós
 	while master in lMaq:
 		lMaq.remove(master)
 	listWN.remove(master)
-	
-	#define o path myria_home
-	path ='/home_nfs/frankwrs/myria/'
 
-	return listWN, lMaq, master, path
+	#define o path myria_home
+	path =pwd+'myria/'
+
+	return listWN, lMaq, master, path, pwd
 
 
 # In[ ]:
 
-#funcao que le o arquivo de entrada e retorna 
+#funcao que le o arquivo de entrada e retorna
 #o path e a lista de workers
 def prepareDeploy(path, master,listDeploy,port):
-	#Captura arquivo de deploy	
+	#Captura arquivo de deploy
 	file = open(path+'myriadeploy/deployment.cfg', 'r')
 	lines = file.readlines()
 	file.close()
@@ -142,28 +155,67 @@ def prepareDeploy(path, master,listDeploy,port):
 	file.write(''.join(lines))
 	file.close()
 
+# In[ ]:
+
+def plot(file):
+    #Coletando json do arquivo de entrada
+    resultOscar = open(file,'r')
+    data = json.load(resultOscar)
+    resultOscar.close()
+
+    #Plot individual de cada cenario
+    for schema in data:
+        listTime = [t['time'] for t in schema['query']]
+        listQuery = [t['queryId'] for t in schema['query']]
+        fig = plt.figure(figsize=(8, 4))
+        plt.ylabel('ID consulta')
+        plt.xlabel('Tempo médio da consulta')
+        plt.title('Cenário '+str(schema['schema'])+' - '+file)
+        plt.barh(range(len(listTime)), listTime, color="green",align='center',height=0.3)
+        plt.yticks(range(len(listTime)), listQuery)
+        plt.xlim([min(listTime) - 0.5, max(listTime) + 0.3])
+        plt.tight_layout()
+        fig.savefig(file+'_wn-'+str(schema['schema']['wn'])+'cn-'+str(schema['schema']['cn'])+'.png',bbox_inches='tight')
+        #plt.show()
+
+
+    #Listas com tempos e esquemas
+    listTime = [t['avgTime'] for t in data]
+    listSchema = [s['schema'] for s in data]
+
+    #Plot com todos cenários
+    fig = plt.figure(figsize=(8, 4))
+    plt.ylabel('Cenários')
+    plt.xlabel('Tempo médio de 10 consultas')
+    plt.title(file)
+    plt.barh(range(len(listTime)), listTime, color="green",align='center',height=0.3)
+    plt.yticks(range(len(listTime)), listSchema)
+    plt.xlim([min(listTime) - 0.5, max(listTime) + 0.3])
+    plt.tight_layout()
+    fig.savefig(file+'.png',bbox_inches='tight')
+    #plt.show()
 
 # In[ ]:
 
 def main():
 
 	#Obtem lista de maquinas, hostname e path
-	listWN, listMaq, master, path = getInfo()
+	listWN, listMaq, master, path, pwd = getInfo()
 
 	#Constroi os cenarios
 	#Faz deploy do serviço para cada cenarios
 	#Executa e faz media de tempo das consultas
 	n = 2
 	while n<=len(listMaq):
-		
+
 		port = 17001
 
 		#Gera lista de nós/nucleos para o deploy
 		listDeploy = []
 		x = 0
 		for x in range(0,n):
-			listDeploy.append(str(x+1)+' = '+str(listWN[x%len(listWN)])+':'+str(port))            
-			port+=1	
+			listDeploy.append(str(x+1)+' = '+str(listWN[x%len(listWN)])+':'+str(port))
+			port+=1
 
 		#prepara o deploy
 		prepareDeploy(path, master,listDeploy,17000)
@@ -171,15 +223,15 @@ def main():
 		print("Master: ",master)
 		print("ListDeploy: ",listDeploy)
 		print("ListWN: ",listWN)
-		
-		#gera cenarios 
+
+		#gera cenarios
 		wn = 2
 		schemas = []
 		while ((wn <= n) and (wn <= len(listWN))):
 			data = {'cn':n-wn,'wn':wn}
 			schemas.append(data)
 			wn = wn * 2
-		
+
 		###Variaveis com comandos
 		setup_cluster = ['./setup_cluster.py deployment.cfg']
 		deploy = ['./launch_cluster.sh deployment.cfg']
@@ -189,17 +241,11 @@ def main():
 		getQuery = ['curl -i -XGET '+master+':8753/query/query-']
 		avgTime = []
 
-		#sshUFF0 = subp.Popen('ssh uff0', stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
-		#while sshUFF0.poll() is None:
-		#	time.sleep(3)
-		#print(sshUFF0.stderr.read())
-		#print(sshUFF0.stdout.read())
-		
 		#para cada cenário gerado
 		for s in schemas:
-			
+
 			#Limpa diretório tmp do master e de todos os nós
-			subp.call('rm -rf /var/usuarios/frankwrs/myria-files/*', shell=True)
+			subp.call('ssh '+master+' \'rm -rf /var/usuarios/frankwrs/myria-files/*\'', shell=True)
 			for node in listWN:
 				subp.call('ssh '+node+' \'rm -rf /var/usuarios/frankwrs/myria-files/*\'', shell=True)
 			print(s)
@@ -210,13 +256,13 @@ def main():
 			while setupMyria.poll() is None:
 				print("Setup_cluster working...")
 				time.sleep(5)
-			
+
 			#Faz deploy do myria com a quantidade de nós passada como argumento
 			myriaDeploy = subp.Popen(deploy, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
 			while myriaDeploy.poll() is None:
 				print("Deploy working...")
 				time.sleep(3);
-			
+
 			#captura os workers ativos
 			ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 			workers = ws.stdout.read()
@@ -227,9 +273,9 @@ def main():
 					print(workers)
 					ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True,shell=True)
 					workers = ws.stdout.read()
-			
-			print(workers)	
-			
+
+			print(workers)
+
 			#seta o diretorio do ingest e query
 			os.chdir(path+"jsonQueries/triangles_twitter/")
 
@@ -239,30 +285,25 @@ def main():
 			#pipe Ingest
 			outIngest = callIngest(ingest)
 			print(outIngest)
-							
+
 			#pipe query
 			queryResult = []
-			for x in range(1,2):
-				queryPipe = subp.Popen(query, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
-				while queryPipe.poll() is None:
-					time.sleep(3)
-				print(queryPipe.stdout.read())
-				'''
-				outQuery = callPopen(query)
+			while x < 1:
+				outQuery = callQuery(query)
 				#print(outQuery['status'])
 				if outQuery['status'] == 'ACCEPTED':
 					print(outQuery['status'])
 					queryResult.append({'queryId': outQuery['queryId']})
+					x+=1
 			print(queryResult)
-			
+			'''
 			#pipe query time
 			for q in queryResult:
 				getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(q['queryId'])
-				outGetQuery = callPopen(getQuery)
-				
+				outGetQuery = callQuery(getQuery)
 				while (outGetQuery['status'] != 'SUCCESS'):
-					print(getQuery)
-					outGetQuery = callPopen(getQuery)
+					print(outGetQuery)
+					outGetQuery = callQuery(getQuery)
 				#Subtração dos tempos de start e finish da query
 				st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:].replace('Z','')
 				st = datetime.datetime.strptime(st,"%H:%M:%S.%f")
@@ -272,18 +313,18 @@ def main():
 
 			#lista com a média de tempo das consultas pra cada cenário
 			avgTime.append({'schema': s, 'query': queryResult, 'avgTime': float("{0:.3f}".format(sum(q['time'] for q in queryResult) / len(queryResult)))})
-			
+
 			#Mata processo de deploy e java levantados
 			myriaDeploy.terminate()
-			
+
 		'''
-			
+
 		os.chdir(path+"myriadeploy/")
 		subp.call('./stop_all_by_force.py deployment.cfg', shell=True)
 
-		#n = n * 2
-		
-		n = len(listMaq)+1
+		n = n * 2
+
+		#n = len(listMaq)+1
 
 	#imprime a lista de cenários com a média
 	#de tempo das rodadas de consultas para
@@ -291,10 +332,11 @@ def main():
 	#print(avgTime)
 
 	#salva resultado em arquivo json
-	#writeJson(path+'result.json',avgTime)
+	#nameFileResult = pwd+'Results/resulOscar_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")+'.json'
+	#writeJson(nameFileResult,avgTime)
+	#plot(nameFileResult)
 
 
 # In[ ]:
 
 if __name__ == "__main__": main()
-
