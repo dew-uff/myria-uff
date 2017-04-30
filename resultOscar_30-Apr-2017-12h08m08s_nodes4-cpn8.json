@@ -1,0 +1,461 @@
+[
+   {
+      "FinishTime": "30-Apr-2017-12h10m05s", 
+      "StartTime": "30-Apr-2017-12h08m26s", 
+      "avgTime": 2.531, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 3.115
+         }, 
+         {
+            "queryId": 3, 
+            "time": 2.369
+         }, 
+         {
+            "queryId": 4, 
+            "time": 2.401
+         }, 
+         {
+            "queryId": 5, 
+            "time": 2.186
+         }, 
+         {
+            "queryId": 6, 
+            "time": 2.161
+         }, 
+         {
+            "queryId": 7, 
+            "time": 2.163
+         }, 
+         {
+            "queryId": 8, 
+            "time": 3.083
+         }, 
+         {
+            "queryId": 9, 
+            "time": 3.14
+         }, 
+         {
+            "queryId": 10, 
+            "time": 2.104
+         }, 
+         {
+            "queryId": 11, 
+            "time": 2.591
+         }
+      ], 
+      "schema": {
+         "cn": 0, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h12m22s", 
+      "StartTime": "30-Apr-2017-12h10m23s", 
+      "avgTime": 1.804, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 2.442
+         }, 
+         {
+            "queryId": 3, 
+            "time": 1.593
+         }, 
+         {
+            "queryId": 4, 
+            "time": 1.567
+         }, 
+         {
+            "queryId": 5, 
+            "time": 1.842
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.518
+         }, 
+         {
+            "queryId": 7, 
+            "time": 2.246
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.582
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.885
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.421
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.944
+         }
+      ], 
+      "schema": {
+         "cn": 2, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h14m39s", 
+      "StartTime": "30-Apr-2017-12h12m40s", 
+      "avgTime": 1.788, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 2.493
+         }, 
+         {
+            "queryId": 3, 
+            "time": 2.005
+         }, 
+         {
+            "queryId": 4, 
+            "time": 1.935
+         }, 
+         {
+            "queryId": 5, 
+            "time": 1.759
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.573
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.442
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.437
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.404
+         }, 
+         {
+            "queryId": 10, 
+            "time": 2.11
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.721
+         }
+      ], 
+      "schema": {
+         "cn": 0, 
+         "wn": 4
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h17m06s", 
+      "StartTime": "30-Apr-2017-12h14m57s", 
+      "avgTime": 1.728, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 2.043
+         }, 
+         {
+            "queryId": 3, 
+            "time": 1.544
+         }, 
+         {
+            "queryId": 4, 
+            "time": 1.811
+         }, 
+         {
+            "queryId": 5, 
+            "time": 2.235
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.26
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.73
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.205
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.872
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.9
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.682
+         }
+      ], 
+      "schema": {
+         "cn": 6, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h19m33s", 
+      "StartTime": "30-Apr-2017-12h17m24s", 
+      "avgTime": 1.778, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 2.268
+         }, 
+         {
+            "queryId": 3, 
+            "time": 1.645
+         }, 
+         {
+            "queryId": 4, 
+            "time": 1.514
+         }, 
+         {
+            "queryId": 5, 
+            "time": 1.681
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.458
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.734
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.921
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.728
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.712
+         }, 
+         {
+            "queryId": 11, 
+            "time": 2.121
+         }
+      ], 
+      "schema": {
+         "cn": 4, 
+         "wn": 4
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h22m23s", 
+      "StartTime": "30-Apr-2017-12h19m51s", 
+      "avgTime": 2.044, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 4.987
+         }, 
+         {
+            "queryId": 3, 
+            "time": 2.087
+         }, 
+         {
+            "queryId": 4, 
+            "time": 1.82
+         }, 
+         {
+            "queryId": 5, 
+            "time": 1.843
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.918
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.687
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.338
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.455
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.819
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.488
+         }
+      ], 
+      "schema": {
+         "cn": 14, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h25m09s", 
+      "StartTime": "30-Apr-2017-12h22m41s", 
+      "avgTime": 1.872, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 2.848
+         }, 
+         {
+            "queryId": 3, 
+            "time": 1.905
+         }, 
+         {
+            "queryId": 4, 
+            "time": 2.066
+         }, 
+         {
+            "queryId": 5, 
+            "time": 1.906
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.448
+         }, 
+         {
+            "queryId": 7, 
+            "time": 2.01
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.521
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.525
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.679
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.81
+         }
+      ], 
+      "schema": {
+         "cn": 12, 
+         "wn": 4
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h28m42s", 
+      "StartTime": "30-Apr-2017-12h25m27s", 
+      "avgTime": 3.055, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 6.138
+         }, 
+         {
+            "queryId": 3, 
+            "time": 6.138
+         }, 
+         {
+            "queryId": 4, 
+            "time": 4.362
+         }, 
+         {
+            "queryId": 5, 
+            "time": 2.755
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.814
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.994
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.934
+         }, 
+         {
+            "queryId": 9, 
+            "time": 1.628
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.848
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.939
+         }
+      ], 
+      "schema": {
+         "cn": 30, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "30-Apr-2017-12h32m15s", 
+      "StartTime": "30-Apr-2017-12h29m00s", 
+      "avgTime": 2.553, 
+      "query": [
+         {
+            "queryId": 2, 
+            "time": 5.016
+         }, 
+         {
+            "queryId": 3, 
+            "time": 4.398
+         }, 
+         {
+            "queryId": 4, 
+            "time": 3.568
+         }, 
+         {
+            "queryId": 5, 
+            "time": 2.133
+         }, 
+         {
+            "queryId": 6, 
+            "time": 1.658
+         }, 
+         {
+            "queryId": 7, 
+            "time": 1.511
+         }, 
+         {
+            "queryId": 8, 
+            "time": 1.882
+         }, 
+         {
+            "queryId": 9, 
+            "time": 2.143
+         }, 
+         {
+            "queryId": 10, 
+            "time": 1.586
+         }, 
+         {
+            "queryId": 11, 
+            "time": 1.634
+         }
+      ], 
+      "schema": {
+         "cn": 28, 
+         "wn": 4
+      }
+   }
+]
