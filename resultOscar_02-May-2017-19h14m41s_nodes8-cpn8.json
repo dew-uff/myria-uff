@@ -1,0 +1,386 @@
+[
+   {
+      "FinishTime": "02-May-2017-19h21m16s", 
+      "StartTime": "02-May-2017-19h14m41s", 
+      "avgTime": 2.947, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.916
+         }, 
+         {
+            "id": 2, 
+            "time": 3.025
+         }, 
+         {
+            "id": 3, 
+            "time": 3.0
+         }, 
+         {
+            "id": 4, 
+            "time": 2.925
+         }, 
+         {
+            "id": 5, 
+            "time": 2.916
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 2, 
+         "wn": 0
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-19h29m11s", 
+      "StartTime": "02-May-2017-19h21m16s", 
+      "avgTime": 2.258, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.239
+         }, 
+         {
+            "id": 2, 
+            "time": 2.236
+         }, 
+         {
+            "id": 3, 
+            "time": 2.292
+         }, 
+         {
+            "id": 4, 
+            "time": 2.31
+         }, 
+         {
+            "id": 5, 
+            "time": 2.242
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 4, 
+         "wn": 2
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-19h37m06s", 
+      "StartTime": "02-May-2017-19h29m11s", 
+      "avgTime": 2.35, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.437
+         }, 
+         {
+            "id": 2, 
+            "time": 2.268
+         }, 
+         {
+            "id": 3, 
+            "time": 2.291
+         }, 
+         {
+            "id": 4, 
+            "time": 2.487
+         }, 
+         {
+            "id": 5, 
+            "time": 2.323
+         }
+      ], 
+      "schema": {
+         "dn": 4, 
+         "m": 4, 
+         "wn": 0
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-19h48m13s", 
+      "StartTime": "02-May-2017-19h37m06s", 
+      "avgTime": 1.959, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 1.939
+         }, 
+         {
+            "id": 2, 
+            "time": 2.0
+         }, 
+         {
+            "id": 3, 
+            "time": 2.017
+         }, 
+         {
+            "id": 4, 
+            "time": 1.92
+         }, 
+         {
+            "id": 5, 
+            "time": 1.937
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 8, 
+         "wn": 6
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-19h59m19s", 
+      "StartTime": "02-May-2017-19h48m13s", 
+      "avgTime": 2.002, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.001
+         }, 
+         {
+            "id": 2, 
+            "time": 2.025
+         }, 
+         {
+            "id": 3, 
+            "time": 1.91
+         }, 
+         {
+            "id": 4, 
+            "time": 1.979
+         }, 
+         {
+            "id": 5, 
+            "time": 2.033
+         }
+      ], 
+      "schema": {
+         "dn": 4, 
+         "m": 8, 
+         "wn": 4
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-20h10m30s", 
+      "StartTime": "02-May-2017-19h59m19s", 
+      "avgTime": 2.073, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 1.994
+         }, 
+         {
+            "id": 2, 
+            "time": 2.014
+         }, 
+         {
+            "id": 3, 
+            "time": 2.073
+         }, 
+         {
+            "id": 4, 
+            "time": 2.166
+         }, 
+         {
+            "id": 5, 
+            "time": 2.131
+         }
+      ], 
+      "schema": {
+         "dn": 8, 
+         "m": 8, 
+         "wn": 0
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-20h23m32s", 
+      "StartTime": "02-May-2017-20h10m30s", 
+      "avgTime": 2.3, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.218
+         }, 
+         {
+            "id": 2, 
+            "time": 2.307
+         }, 
+         {
+            "id": 3, 
+            "time": 2.305
+         }, 
+         {
+            "id": 4, 
+            "time": 2.289
+         }, 
+         {
+            "id": 5, 
+            "time": 2.389
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 8, 
+         "wn": 14
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-20h36m27s", 
+      "StartTime": "02-May-2017-20h23m32s", 
+      "avgTime": 2.392, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.657
+         }, 
+         {
+            "id": 2, 
+            "time": 2.477
+         }, 
+         {
+            "id": 3, 
+            "time": 2.231
+         }, 
+         {
+            "id": 4, 
+            "time": 2.375
+         }, 
+         {
+            "id": 5, 
+            "time": 2.323
+         }
+      ], 
+      "schema": {
+         "dn": 4, 
+         "m": 8, 
+         "wn": 12
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-20h49m27s", 
+      "StartTime": "02-May-2017-20h36m27s", 
+      "avgTime": 2.255, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 2.398
+         }, 
+         {
+            "id": 2, 
+            "time": 2.262
+         }, 
+         {
+            "id": 3, 
+            "time": 2.259
+         }, 
+         {
+            "id": 4, 
+            "time": 2.243
+         }, 
+         {
+            "id": 5, 
+            "time": 2.241
+         }
+      ], 
+      "schema": {
+         "dn": 8, 
+         "m": 8, 
+         "wn": 8
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-21h06m47s", 
+      "StartTime": "02-May-2017-20h49m27s", 
+      "avgTime": 3.166, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 3.242
+         }, 
+         {
+            "id": 2, 
+            "time": 3.2
+         }, 
+         {
+            "id": 3, 
+            "time": 3.036
+         }, 
+         {
+            "id": 4, 
+            "time": 3.094
+         }, 
+         {
+            "id": 5, 
+            "time": 3.205
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 8, 
+         "wn": 30
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-21h24m02s", 
+      "StartTime": "02-May-2017-21h06m47s", 
+      "avgTime": 3.224, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 3.159
+         }, 
+         {
+            "id": 2, 
+            "time": 3.137
+         }, 
+         {
+            "id": 3, 
+            "time": 3.363
+         }, 
+         {
+            "id": 4, 
+            "time": 3.315
+         }, 
+         {
+            "id": 5, 
+            "time": 3.198
+         }
+      ], 
+      "schema": {
+         "dn": 4, 
+         "m": 8, 
+         "wn": 28
+      }
+   }, 
+   {
+      "FinishTime": "02-May-2017-21h41m29s", 
+      "StartTime": "02-May-2017-21h24m02s", 
+      "avgTime": 3.132, 
+      "query": [
+         {
+            "id": 1, 
+            "time": 3.186
+         }, 
+         {
+            "id": 2, 
+            "time": 3.05
+         }, 
+         {
+            "id": 3, 
+            "time": 3.135
+         }, 
+         {
+            "id": 4, 
+            "time": 3.074
+         }, 
+         {
+            "id": 5, 
+            "time": 3.303
+         }
+      ], 
+      "schema": {
+         "dn": 8, 
+         "m": 8, 
+         "wn": 24
+      }
+   }
+]
