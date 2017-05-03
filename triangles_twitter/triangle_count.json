@@ -1,0 +1,189 @@
+{
+    "fragments": [
+
+        {
+            "operators": [
+                {
+                    "opId": "SCAN1",
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "triangles",
+                        "relationName": "twitter",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "argChild": "SCAN1",
+                    "argPf": {
+                        "index": "1",
+                        "type": "SingleFieldHash"
+                    },
+                    "opId": "SP1",
+                    "opType": "ShuffleProducer"
+                }
+            ],
+            "workers": [
+                "1",
+                "2"
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": "SCAN2",
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "triangles",
+                        "relationName": "twitter",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "argChild": "SCAN2",
+                    "argPf": {
+                        "index": "0",
+                        "type": "SingleFieldHash"
+                    },
+                    "opId": "SP2",
+                    "opType": "ShuffleProducer"
+                }
+            ],
+            "workers": [
+                "1",
+                "2"
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "argOperatorId": "SP1",
+                    "opId": "SC1",
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "argOperatorId": "SP2",
+                    "opId": "SC2",
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "argChild1": "SC1",
+                    "argChild2": "SC2",
+                    "argColumns1": [
+                        "1"
+                    ],
+                    "argColumns2": [
+                        "0"
+                    ],
+                    "argSelect1": [
+                        "0"
+                    ],
+                    "argSelect2": [
+                        "1"
+                    ],
+                    "opId": "JOIN1",
+                    "opType": "SymmetricHashJoin"
+                },
+                {
+                    "argChild": "JOIN1",
+                    "argPf": {
+                        "indexes": [
+                            "0",
+                            "1"
+                        ],
+                        "type": "MultiFieldHash"
+                    },
+                    "opId": "SP3",
+                    "opType": "ShuffleProducer"
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": "SCAN3",
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "triangles",
+                        "relationName": "twitter",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "argChild": "SCAN3",
+                    "argPf": {
+                        "indexes": [
+                            "1",
+                            "0"
+                        ],
+                        "type": "MultiFieldHash"
+                    },
+                    "opId": "SP4",
+                    "opType": "ShuffleProducer"
+                }
+            ],
+            "workers": [
+                "1",
+                "2"
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "argOperatorId": "SP3",
+                    "opId": "SC3",
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "argOperatorId": "SP4",
+                    "opId": "SC4",
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "argChild1": "SC3",
+                    "argChild2": "SC4",
+                    "argColumns1": [
+                        "0",
+                        "1"
+                    ],
+                    "argColumns2": [
+                        "1",
+                        "0"
+                    ],
+                    "argSelect1": [
+                        "0"
+                    ],
+                    "argSelect2": [
+                        "1"
+                    ],
+                    "opId": "JOIN2",
+                    "opType": "SymmetricHashJoin"
+                },
+                {
+                    "opId" : "COUNT",
+                    "opType" : "Aggregate",
+                    "argChild" : "JOIN2",
+                    "argAggFields" : ["0"],
+                    "argAggOperators" : [["AGG_OP_COUNT"]]
+                },
+                {
+                    "argChild": "COUNT",
+                    "opId": "CP1",
+                    "opType": "CollectProducer"
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "argOperatorId": "CP1",
+                    "opId": "CC1",
+                    "opType": "CollectConsumer"
+                }
+            ],
+            "workers": [
+                "0"
+            ]
+        }
+    ],
+    "logicalRa": "INSERT(JOIN(JOIN(SCAN1,SCAN2),SCAN3)", "rawDatalog": "twitterJoin(x,z) :- twitter(x,y),twitter(y,z),twitter(z,x)."
+}
