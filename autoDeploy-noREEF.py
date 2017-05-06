@@ -344,37 +344,41 @@ def main():
 				#pipe query
 				queryResult = {}
 				queryResult['id'] = q
-				sucess = False
 				
+				#Inicio da execução da consulta
 				print "Start query ",q
-				outQuery = callQuery(query)
-				#print(outQuery)
-				while not sucess:
+				queryERROR = True
+				while queryERROR:
+					outQuery = callQuery(query)
+					#print(outQuery)
 					if not isinstance(outQuery,str):
 						if outQuery["status"] == "ACCEPTED":
 							#print(outQuery['status'])
 							queryId = outQuery['queryId']
-							sucess = True
+							queryERROR = False
 						else:
 							print("QUERY NOT SUCESS: "+outQuery['status'])
-							outQuery = callQuery(query)
-	                                                time.sleep(3)
 					else:
 						print("QUERY ERROR: \n"+outQuery)
-						outQuery = callQuery(query)
-						time.sleep(3)
-						
-				#pipe query time
-				getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(queryId)
-				outGetQuery = callQuery(getQuery)
-				#print(outGetQuery)
-				
-				while (outGetQuery['status'] != 'SUCCESS'):
-					print("Status query ",outGetQuery['status']," - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+"...")
-					time.sleep(5)
-					outGetQuery = callQuery(getQuery)
-				#Subtração dos tempos de start e finish da query
-				
+					
+					if not queryERROR:	
+						#pipe query time
+						getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(queryId)
+						outGetQuery = callQuery(getQuery)
+						#print(outGetQuery)
+					
+						while (outGetQuery['status'] != 'SUCCESS'):
+							print("Status query ",outGetQuery['status']," - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+"...")
+							if outGetQuery['status'] == 'SUCCESS':
+								queryERROR = False
+							elif outGetQuery['status'] == 'RUNNING':
+								time.sleep(5)
+								outGetQuery = callQuery(getQuery)
+							elif outGetQuery['status'] == 'ERROR':	
+								queryERROR = True
+								break
+
+				#Subtração dos tempos de start e finish da query		
 				st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:outGetQuery['startTime'].find('-',10)]
 				st = datetime.datetime.strptime(st,"%H:%M:%S.%f")
 				ft = outGetQuery['finishTime'][outGetQuery['finishTime'].find('T')+1:outGetQuery['finishTime'].find('-',10)]
