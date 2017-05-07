@@ -1,0 +1,1 @@
+Experimento realizado com 8 máquinas com 8 núcles cada, sendo uma destinada para o nó mestre. Foram submetidas 5 consultas, uma por deploy do Myria, para cada esquema gerado. Utilizou-se a base de dados "twitter_small.csv".
