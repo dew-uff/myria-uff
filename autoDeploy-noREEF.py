@@ -28,8 +28,8 @@ def writeJson(path,js):
 # In[ ]:
 
 #funcao para alterar o json da consulta
-def alter_join(dn,wn,path):
-	path = path+'jsonQueries/triangles_twitter/triangle_count.json'
+def alter_join(dn,wn,path,fileQuery):
+	path = path+'jsonQueries/triangles_twitter/'+fileQuery
 	ingest = open(path,'r')
 	data = json.load(ingest)
 	ingest.close()
@@ -49,13 +49,13 @@ def alter_join(dn,wn,path):
 # In[ ]:
 
 #funcao para alterar o json do ingest
-def alter_ingest(dn,path):
+def alter_ingest(dn,path,fileDataset):
 	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
 	ingest = open(path_,'r')
 	data = json.load(ingest)
 	ingest.close()
 	data['workers'] = dn
-	data['source']['filename'] = path+'jsonQueries/triangles_twitter/twitter.csv'
+	data['source']['filename'] = path+'jsonQueries/triangles_twitter/'+fileDataset
 	writeJson(path_,data)
 
 
@@ -63,16 +63,16 @@ def alter_ingest(dn,path):
 
 #funcao que alterar os json de ingest e query de acordo
 #com o cenario
-def ingest_and_query(schema,path):
+def ingest_and_query(schema,path,fileQuery,fileDataset):
 	#ingest
 	dn = list(range(1,schema['dn']+1))
-	alter_ingest(dn,path)
+	alter_ingest(dn,path,fileDataset)
 	#join
 	if (schema['wn']==0):
 		wn = dn
 	else:
 		wn = list(range(1,schema['dn']+schema['wn']+1))
-	alter_join(dn,wn,path)
+	alter_join(dn,wn,path,fileQuery)
 
 
 # In[ ]:
@@ -209,12 +209,16 @@ def main():
 	print("Path: ",path)
         print("Master: ",master)
 	
+	#Dfine nome dos arquivos de consulta e dataset
+	fileQuery = 'twitter_selfjoin-count.json'
+	fileDataset = 'twitter.csv'
+
 	#Define nome do arquivo com resultados
-	nameFileResult = pwd+'Results/resultOscar_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'.json'
+	nameFileResult = pwd+'Results/resultOscar_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
 	#Constroi os cenarios
 	#Faz deploy do serviço para cada cenarios
 	#Executa e faz media de tempo das consultas
-	n = 2
+	n = 2 
 	avgTime = []
 	while n<=len(listMaq):
 
@@ -255,7 +259,7 @@ def main():
 		deploy = ['./launch_cluster.sh deployment.cfg']
 		walive = ['curl '+master+':8753/workers/alive']
 		ingest = ['curl -i -XPOST '+master+':8753/dataset -H \"Content-type: application/json\" -d @./ingest_twitter.json']
-		query = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\" -d @./triangle_count.json']
+		query = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\" -d @./'+fileQuery]
 		getQuery = ['curl -i -XGET '+master+':8753/query/query-']
 
 		#para cada cenário gerado
@@ -288,8 +292,8 @@ def main():
 				setupMyria = subp.Popen(setup_cluster, stdout=subp.PIPE,stderr=subp.PIPE, shell=True)
 				while setupMyria.poll() is None:
 					print("Setup_cluster working "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+"...")
-					#print(setupMyria.stdout.read()+"\n\n")
 					time.sleep(5)
+					saida = setupMyria.stdout.read()
 
 				#Faz deploy do myria
 				errorDeploy = True
@@ -309,6 +313,7 @@ def main():
 						time.sleep(3)
 
 					#captura os workers ativos
+					time.sleep(5)
 					ws = subp.Popen(walive, stdout=subp.PIPE,stderr=subp.PIPE,universal_newlines=True, shell=True)
 					workers = ws.stdout.read()
 					#print(workers)
@@ -316,7 +321,7 @@ def main():
 					w = 0
 					for x in range(1,n+1):
 						if str(x) not in workers:
-							print("Worker ",x," not alive")
+							print("Worker ",x," not alive only ",workers)
 						else:
 							w += 1
 
@@ -329,7 +334,7 @@ def main():
 				os.chdir(path+"jsonQueries/triangles_twitter/")
 
 				#Altera os arquivos json de ingest e join
-				ingest_and_query(s,path)
+				ingest_and_query(s,path,fileQuery,fileDataset)
 				
 				print "Start ingest"
 				#pipe Ingest
@@ -368,7 +373,7 @@ def main():
 						#print(outGetQuery)
 					
 						while (outGetQuery['status'] != 'SUCCESS'):
-							print("Status query ",outGetQuery['status']," - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+"...")
+							print("Status query: "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
 							if outGetQuery['status'] == 'SUCCESS':
 								queryERROR = False
 							elif outGetQuery['status'] == 'RUNNING':
