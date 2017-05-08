@@ -210,7 +210,7 @@ def main():
         print("Master: ",master)
 	
 	#Dfine nome dos arquivos de consulta e dataset
-	fileQuery = 'twitter_selfjoin-count.json'
+	fileQuery = 'triangle_count.json'
 	fileDataset = 'twitter.csv'
 
 	#Define nome do arquivo com resultados
@@ -218,7 +218,7 @@ def main():
 	#Constroi os cenarios
 	#Faz deploy do serviço para cada cenarios
 	#Executa e faz media de tempo das consultas
-	n = 2 
+	n = 64
 	avgTime = []
 	while n<=len(listMaq):
 
