@@ -104,7 +104,7 @@ def callQuery(cmd):
 	if '{' in outPipe:
 		out = json.loads(outPipe[outPipe.find('{',0):])
 		return out
-	else: 
+	else:
 		return outPipe
 
 # In[ ]:
@@ -160,55 +160,13 @@ def prepareDeploy(path, master,listDeploy,port):
 	file.write(''.join(lines))
 	file.close()
 
-# In[ ]:
-
-#def plot(file):
-    #Coletando json do arquivo de entrada
-#    resultOscar = open(file,'r')
-#    data = json.load(resultOscar)
-#    resultOscar.close()
-
-    #Plot individual de cada cenario
-#    for schema in data:
-#        listTime = [t['time'] for t in schema['query']]
-#        listQuery = [t['queryId'] for t in schema['query']]
-#        fig = plt.figure(figsize=(8, 4))
-#        plt.ylabel('ID consulta')
-#        plt.xlabel('Tempo médio da consulta')
-#        plt.title('Cenário '+str(schema['schema'])+' - '+file)
-#        plt.barh(range(len(listTime)), listTime, color="green",align='center',height=0.3)
-#        plt.yticks(range(len(listTime)), listQuery)
-#        plt.xlim([min(listTime) - 0.5, max(listTime) + 0.3])
-#        plt.tight_layout()
-#        fig.savefig(file+'_wn-'+str(schema['schema']['wn'])+'cn-'+str(schema['schema']['cn'])+'.png',bbox_inches='tight')
-        #plt.show()
-
-
-    #Listas com tempos e esquemas
- #   listTime = [t['avgTime'] for t in data]
- #   listSchema = [s['schema'] for s in data]
-
-    #Plot com todos cenários
- #   fig = plt.figure(figsize=(8, 4))
- #   plt.ylabel('Cenários')
- #   plt.xlabel('Tempo médio de 10 consultas')
- #   plt.title(file)
- #   plt.barh(range(len(listTime)), listTime, color="green",align='center',height=0.3)
- #   plt.yticks(range(len(listTime)), listSchema)
- #   plt.xlim([min(listTime) - 0.5, max(listTime) + 0.3])
- #   plt.tight_layout()
- #   fig.savefig(file+'.png',bbox_inches='tight')
-    #plt.show()
-
-# In[ ]:
-
 def main():
 
 	#Obtem lista de maquinas, hostname e path
 	listDN, listMaq, master, path, pwd = getInfo()
 	print("Path: ",path)
         print("Master: ",master)
-	
+
 	#Dfine nome dos arquivos de consulta e dataset
 	fileQuery = 'triangle_count.json'
 	fileDataset = 'twitter.csv'
@@ -245,7 +203,7 @@ def main():
                         #time.sleep(3)
 
 		#gera cenarios
-		dn = 2 
+		dn = 2
 		schemas = []
 		m = n if n < len(listDN) else len(listDN)
 		while ((dn <= n) and (dn <= len(listDN))):
@@ -264,18 +222,18 @@ def main():
 
 		#para cada cenário gerado
 		for s in schemas:
-			
+
 			startSchema = str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))
 			listQuery = []
 			for q in range(1,6):
-		
+
 				#Limpa diretório tmp do master e de todos os nós
 				cmd = ['ssh '+master+' \'rm -rf /var/usuarios/frankwrs/*\'']
 				cleanMaster = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
 				while cleanMaster.poll() is None:
 					print("Apagando arquivos temporários master...")
 					time.sleep(3)
-	
+
         	                for node in listDN:
 					#Limpa diretório tmp do master e de todos os nós
                         		cmd = ['ssh '+node+' \'rm -rf /var/usuarios/frankwrs/*\'']
@@ -283,7 +241,7 @@ def main():
                         		while cleanNodes.poll() is None:
                                 		print("Apagando arquivos temporários worker "+node+"...")
                                 		time.sleep(3)
-			
+
 				print(s)
 
 				#seta o diretorio de deploy
@@ -326,7 +284,7 @@ def main():
 							w += 1
 
 					if w == n: errorDeploy = False
-						
+
 
 				print("Workers alive: "+workers)
 
@@ -335,7 +293,7 @@ def main():
 
 				#Altera os arquivos json de ingest e join
 				ingest_and_query(s,path,fileQuery,fileDataset)
-				
+
 				print "Start ingest"
 				#pipe Ingest
 				outIngest = callIngest(ingest)
@@ -343,13 +301,13 @@ def main():
 					print("ERRO INGEST\n"+outIngest)
 					outIngest = callIngest(ingest)
 				print "Finish ingest"
-			
+
 				#print(outIngest)
 
 				#pipe query
 				queryResult = {}
 				queryResult['id'] = q
-				
+
 				#Inicio da execução da consulta
 				print "Start query ",q
 				queryERROR = True
@@ -365,13 +323,13 @@ def main():
 							print("QUERY NOT SUCESS: "+outQuery['status'])
 					else:
 						print("QUERY ERROR: \n"+outQuery)
-					
-					if not queryERROR:	
+
+					if not queryERROR:
 						#pipe query time
 						getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(queryId)
 						outGetQuery = callQuery(getQuery)
 						#print(outGetQuery)
-					
+
 						while (outGetQuery['status'] != 'SUCCESS'):
 							print("Status query: "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
 							if outGetQuery['status'] == 'SUCCESS':
@@ -379,11 +337,11 @@ def main():
 							elif outGetQuery['status'] == 'RUNNING':
 								time.sleep(5)
 								outGetQuery = callQuery(getQuery)
-							elif outGetQuery['status'] == 'ERROR':	
+							elif outGetQuery['status'] == 'ERROR':
 								queryERROR = True
 								break
 
-				#Subtração dos tempos de start e finish da query		
+				#Subtração dos tempos de start e finish da query
 				st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:outGetQuery['startTime'].find('-',10)]
 				st = datetime.datetime.strptime(st,"%H:%M:%S.%f")
 				ft = outGetQuery['finishTime'][outGetQuery['finishTime'].find('T')+1:outGetQuery['finishTime'].find('-',10)]
@@ -407,7 +365,7 @@ def main():
 
 			#Salva resultados no cenário no arquivo
 			writeJson(nameFileResult,avgTime)
-		
+
 		n = n * 2
 
 		#n = len(listMaq)+1
