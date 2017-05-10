@@ -184,7 +184,6 @@ def main():
 
 		#Gera lista de nós/nucleos para o deploy
 		listDeploy = []
-		x = 0
 		for x in range(0,n):
 			listDeploy.append(str(x+1)+' = '+str(listDN[x%len(listDN)])+':'+str(port))
 			port+=1

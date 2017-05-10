@@ -18,9 +18,8 @@ def writeJson(path,js):
 #funcao para alterar o json da consulta
 def alter_join(dn,wn,path,fileQuery):
 	path = path+'jsonQueries/triangles_twitter/'+fileQuery
-	ingest = open(path,'r')
-	data = json.load(ingest)
-	ingest.close()
+	with open(path) as query:
+		data = json.load(query)
 	for frag in data['fragments']:
 		for op in frag['operators']:
 			if (op['opType'] == 'CollectConsumer'):
@@ -36,9 +35,8 @@ def alter_join(dn,wn,path,fileQuery):
 #funcao para alterar o json do ingest
 def alter_ingest(dn,path,fileDataset):
 	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
-	ingest = open(path_,'r')
-	data = json.load(ingest)
-	ingest.close()
+	with open(path_) as ingest:
+		data = json.load(ingest)
 	data['workers'] = dn
 	data['source']['filename'] = path+'jsonQueries/triangles_twitter/'+fileDataset
 	writeJson(path_,data)
@@ -139,6 +137,19 @@ def getBaselineSchemas(qtdM):
 	    x = x * 2
 	return schemas
 
+def getFullSchemas(qtdM,cores):
+	schemas = []
+	x = 2
+	while x <= qtdM:
+	    wn,dn = x,x
+	    while ((dn+wn) <= (x*cores)):
+	        data = {'wn':wn,'dn':dn,'m':x}
+	        print(data)
+	        #schemas.append(data)
+	        wn += (dn * 2)
+	    x = x * 2
+	return schemas
+
 def main():
 
 	#Obtem lista de maquinas, hostname e path
@@ -150,9 +161,10 @@ def main():
 	#Dfine nome dos arquivos de consulta e dataset
 	fileQuery = 'twitter_selfjoin-count.json'
 	fileDataset = 'twitter_small.csv'
+	sample = 'baseline'
 
 	#Define nome do arquivo com resultados
-	nameFileResult = pwd+'Results/baseline_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
+	nameFileResult = pwd+'Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
 
 	###Variaveis com comandos
 	setup_cluster = ['./setup_cluster.py deployment.cfg']
@@ -168,9 +180,11 @@ def main():
 
 	#gera cenarios
 	schemas = getBaselineSchemas(len(listDN))
+	#schemas = getFullSchemas(len(listDN),len(listMaq)/len(listDN))
+
 	avgTime = []
 	for s in shemas:
-		avgTime.append(({'schema': s,'query': [])
+		avgTime.append({'schema': s,'query': []})
 
 	for x in range(1,6):
 
@@ -182,9 +196,8 @@ def main():
 
 			#Gera lista de nós/nucleos para o deploy
 			listDeploy = []
-			t = 0
 			for i in range(0,s['schema']['m']):
-				listDeploy.append(str(t+1)+' = '+str(listDN[t%len(listDN)])+':'+str(port))
+				listDeploy.append(str(i+1)+' = '+str(listDN[i%len(listDN)])+':'+str(port))
 				port+=1
 
 			#prepara o deploy
@@ -195,12 +208,12 @@ def main():
 			errorDeploy = True
 			while errorDeploy:
 				#Mata processo de deploy e java levantados
-	        	os.chdir(path+"myriadeploy/")
-	        	cmd = ['./stop_all_by_force.py deployment.cfg']
-		        killProcess = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
-	            while killProcess.poll() is None:
-	                print("Matando processos Myria...")
-	                time.sleep(3)
+				os.chdir(path+"myriadeploy/")
+				cmd = ['./stop_all_by_force.py deployment.cfg']
+				killProcess = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
+				while killProcess.poll() is None:
+					print("Matando processos Myria...")
+					time.sleep(3)
 
 				#Limpa diretório tmp do master e de todos os nós
 				cmd = ['ssh '+master+' \'rm -rf /var/usuarios/frankwrs/*\'']
@@ -239,13 +252,13 @@ def main():
 				#print(workers)
 				#testa se os workers estao todos ativos
 				w = 0
-				for i in range(1,n+1):
+				for i in range(1,s['schema']['m']+1):
 					if str(i) not in workers:
 						print("Worker ",i," not alive only ",workers)
 					else:
 						w += 1
 
-				if w == n: errorDeploy = False
+				if w == s['schema']['m']: errorDeploy = False
 
 			print("Workers alive: "+workers)
 
@@ -253,7 +266,7 @@ def main():
 			os.chdir(path+"jsonQueries/triangles_twitter/")
 
 			#Altera os arquivos json de ingest e join
-			ingest_and_query(s,path,fileQuery,fileDataset)
+			ingest_and_query(s['schema'],path,fileQuery,fileDataset)
 
 			print "Start ingest"
 			#pipe Ingest
@@ -275,7 +288,7 @@ def main():
 					if not isinstance(outQuery,str):
 						if outQuery["status"] == "ACCEPTED":
 							#print(outQuery['status'])
-							queryID.append(outQuery['queryId'])
+							queryID.append(outQuxiery['queryId'])
 							queryERROR = False
 						else:
 							print("QUERY NOT SUCESS: "+outQuery['status'])
@@ -290,31 +303,27 @@ def main():
 				queryERROR = True
 				while queryERROR:
 					#pipe query time
-					getQuery = 'curl -i -XGET '+master+':8753/query/query-'+q
-					outGetQuery = callQuery(getQuery)
+					outGetQuery = callQuery(getQuery+str(q))
 					#print(outGetQuery)
 
-					while (outGetQuery['status'] != 'SUCCESS'):
-						print("Status query: "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-						if outGetQuery['status'] == 'SUCCESS':
-							queryERROR = False
-						elif outGetQuery['status'] == 'RUNNING':
-							time.sleep(5)
-							outGetQuery = callQuery(getQuery)
-						elif outGetQuery['status'] == 'ERROR':
-							queryERROR = True
-							break
+					print("Status query: "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+					if outGetQuery['status'] == 'SUCCESS':
+						queryERROR = False
+					elif outGetQuery['status'] == 'RUNNING':
+						time.sleep(5)
+						outGetQuery = callQuery(getQuery)
+					elif outGetQuery['status'] == 'ERROR':
+						queryERROR = True
 
-					if not queryERROR:
-						#Subtração dos tempos de start e finish da query
-						st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:outGetQuery['startTime'].find('-',10)]
-						st = datetime.datetime.strptime(st,"%H:%M:%S.%f")
-						ft = outGetQuery['finishTime'][outGetQuery['finishTime'].find('T')+1:outGetQuery['finishTime'].find('-',10)]
-						ft = datetime.datetime.strptime(ft,"%H:%M:%S.%f")
-						if t > 1:
-							timeQ['cache'] = (ft - st).total_seconds()
-						else:
-							timeQ['nocache'] = (ft - st).total_seconds()
+				#Subtração dos tempos de start e finish da query
+				st = outGetQuery['startTime'][outGetQuery['startTime'].find('T')+1:outGetQuery['startTime'].find('-',10)]
+				st = datetime.datetime.strptime(st,"%H:%M:%S.%f")
+				ft = outGetQuery['finishTime'][outGetQuery['finishTime'].find('T')+1:outGetQuery['finishTime'].find('-',10)]
+				ft = datetime.datetime.strptime(ft,"%H:%M:%S.%f")
+				if t > 1:
+					timeQ['cache'] = (ft - st).total_seconds()
+				else:
+					timeQ['nocache'] = (ft - st).total_seconds()
 				t+=1
 
 			s['query'].append({'id':x,'time':timeQ})
@@ -327,9 +336,15 @@ def main():
         	        print("Matando processos Myria...")
         	        time.sleep(3)
 
-			#lista com a média de tempo das consultas pra cada cenário
-
 			#Salva resultados no cenário no arquivo
 			writeJson(nameFileResult,avgTime)
+
+	#calcula média das consultas para cada esquema
+	for s in avgTime:
+    	avgTimeQueryCache = (sum(t['time']['cache'] for t in s['query']) - max(t['time']['cache'] for t in s['query']) - min(t['time']['cache'] for t in s['query']))/(len(s['query'])-2)
+    	avgTimeQueryNoCache = (sum(t['time']['nocache'] for t in s['query']) - max(t['time']['nocache'] for t in s['query']) - min(t['time']['nocache'] for t in s['query']))/(len(s['query'])-2)
+    	s.update({'avgTime':{'cache': float("{0:.3f}".format(avgTimeQueryCache)), 'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
+
+	writeJson(nameFileResult,avgTime)
 
 if __name__ == "__main__": main()
