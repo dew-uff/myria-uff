@@ -1,0 +1,134 @@
+[
+   {
+      "query": [
+         {
+            "id": 1, 
+            "time": {
+               "cache": 0.864, 
+               "nocache": 1.501
+            }
+         }, 
+         {
+            "id": 2, 
+            "time": {
+               "cache": 0.961, 
+               "nocache": 1.515
+            }
+         }, 
+         {
+            "id": 3, 
+            "time": {
+               "cache": 1.088, 
+               "nocache": 1.636
+            }
+         }, 
+         {
+            "id": 4, 
+            "time": {
+               "cache": 0.882, 
+               "nocache": 1.473
+            }
+         }, 
+         {
+            "id": 5, 
+            "time": {
+               "cache": 0.869, 
+               "nocache": 1.454
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 2, 
+         "wn": 0
+      }
+   }, 
+   {
+      "query": [
+         {
+            "id": 1, 
+            "time": {
+               "cache": 0.653, 
+               "nocache": 1.192
+            }
+         }, 
+         {
+            "id": 2, 
+            "time": {
+               "cache": 0.605, 
+               "nocache": 1.178
+            }
+         }, 
+         {
+            "id": 3, 
+            "time": {
+               "cache": 0.659, 
+               "nocache": 1.181
+            }
+         }, 
+         {
+            "id": 4, 
+            "time": {
+               "cache": 0.617, 
+               "nocache": 1.176
+            }
+         }, 
+         {
+            "id": 5, 
+            "time": {
+               "cache": 0.594, 
+               "nocache": 1.156
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 4, 
+         "wn": 2
+      }
+   }, 
+   {
+      "query": [
+         {
+            "id": 1, 
+            "time": {
+               "cache": 1.149, 
+               "nocache": 1.111
+            }
+         }, 
+         {
+            "id": 2, 
+            "time": {
+               "cache": 0.577, 
+               "nocache": 1.088
+            }
+         }, 
+         {
+            "id": 3, 
+            "time": {
+               "cache": 0.574, 
+               "nocache": 1.094
+            }
+         }, 
+         {
+            "id": 4, 
+            "time": {
+               "cache": 0.564, 
+               "nocache": 1.104
+            }
+         }, 
+         {
+            "id": 5, 
+            "time": {
+               "cache": 0.563, 
+               "nocache": 1.117
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 4, 
+         "m": 4, 
+         "wn": 0
+      }
+   }
+]

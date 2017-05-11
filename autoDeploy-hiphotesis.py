@@ -164,8 +164,8 @@ def main():
 	fileDataset = 'twitter.csv'
 
         #gera cenarios
-        sample = 'baseline'
-        schemas = getBaselineSchemas(len(listDN))
+        sample = 'hyphotesis'
+        schemas = getFullSchemas(len(listDN),len(listMaq)/len(listDN))
 
 	#Define nome do arquivo com resultados
 	nameFileResult = pwd+'Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
@@ -195,8 +195,8 @@ def main():
 
 			#Gera lista de nós/nucleos para o deploy
 			listDeploy = []
-			for i in range(0,s['schema']['m']):
-				listDeploy.append(str(i+1)+' = '+str(listDN[i%len(listDN)])+':'+str(port))
+			for i in range(0,s['schema']['dn']+s['schema']['wn']):
+				listDeploy.append(str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port))
 				port+=1
 
 			#prepara o deploy
@@ -221,7 +221,7 @@ def main():
 					print("Apagando arquivos temporários master...")
 					time.sleep(3)
 
-		            	for node in listDN:
+		            	for node in listDN[0:s['schema']['m']]:
 					#Limpa diretório tmp do master e de todos os nós
 	        			cmd = ['ssh '+node+' \'rm -rf /var/usuarios/frankwrs/*\'']
 	        			cleanNodes = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True)
