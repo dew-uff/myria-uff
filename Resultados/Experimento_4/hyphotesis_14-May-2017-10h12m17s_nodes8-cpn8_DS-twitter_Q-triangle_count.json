@@ -1,0 +1,55 @@
+[
+   {
+      "avgTime": {
+         "cache": 247.577, 
+         "nocache": 252.23
+      }, 
+      "query": [
+         {
+            "finishTime": "10h23m39s", 
+            "id": 1, 
+            "time": {
+               "cache": 257.529, 
+               "nocache": 259.475
+            }
+         }, 
+         {
+            "finishTime": "10h34m44s", 
+            "id": 2, 
+            "time": {
+               "cache": 249.798, 
+               "nocache": 255.116
+            }
+         }, 
+         {
+            "finishTime": "10h45m41s", 
+            "id": 3, 
+            "time": {
+               "cache": 244.354, 
+               "nocache": 248.577
+            }
+         }, 
+         {
+            "finishTime": "10h56m30s", 
+            "id": 4, 
+            "time": {
+               "cache": 241.461, 
+               "nocache": 244.011
+            }
+         }, 
+         {
+            "finishTime": "11h07m35s", 
+            "id": 5, 
+            "time": {
+               "cache": 248.58, 
+               "nocache": 252.996
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 8, 
+         "m": 8, 
+         "wn": 8
+      }
+   }
+]
