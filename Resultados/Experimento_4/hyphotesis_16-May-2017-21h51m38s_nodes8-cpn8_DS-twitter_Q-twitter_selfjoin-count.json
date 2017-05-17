@@ -1,0 +1,44 @@
+[
+   {
+      "query": [
+         {
+            "finishTime": "21h57m11s", 
+            "id": 1, 
+            "time": {
+               "cache": 70.165, 
+               "nocache": 73.417
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 1, 
+         "wn": 30
+      }
+   }, 
+   {
+      "query": [
+         {
+            "finishTime": "22h05m18s", 
+            "id": 1, 
+            "time": {
+               "cache": 80.277, 
+               "nocache": 84.713
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 1, 
+         "wn": 62
+      }
+   }, 
+   {
+      "query": [], 
+      "schema": {
+         "dn": 4, 
+         "m": 1, 
+         "wn": 60
+      }
+   }
+]
