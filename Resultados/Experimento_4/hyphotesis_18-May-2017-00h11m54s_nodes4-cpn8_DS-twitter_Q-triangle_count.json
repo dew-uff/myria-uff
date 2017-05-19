@@ -1,0 +1,27 @@
+[
+   {
+      "query": [
+         {
+            "finishTime": "00h35m11s", 
+            "id": 1, 
+            "time": {
+               "cache": 361.146, 
+               "nocache": 358.891
+            }
+         }, 
+         {
+            "finishTime": "00h50m27s", 
+            "id": 2, 
+            "time": {
+               "cache": 363.751, 
+               "nocache": 357.443
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 4, 
+         "wn": 30
+      }
+   }
+]

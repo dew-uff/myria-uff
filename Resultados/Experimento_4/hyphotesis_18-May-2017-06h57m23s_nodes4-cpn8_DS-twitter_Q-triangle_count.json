@@ -1,0 +1,108 @@
+[
+   {
+      "avgTime": {
+         "cache": 414.323, 
+         "nocache": 426.193
+      }, 
+      "query": [
+         {
+            "finishTime": "07h14m18s", 
+            "id": 1, 
+            "time": {
+               "cache": 443.013, 
+               "nocache": 452.455
+            }
+         }, 
+         {
+            "finishTime": "07h45m03s", 
+            "id": 2, 
+            "time": {
+               "cache": 410.296, 
+               "nocache": 428.654
+            }
+         }, 
+         {
+            "finishTime": "08h16m34s", 
+            "id": 3, 
+            "time": {
+               "cache": 407.95, 
+               "nocache": 423.45
+            }
+         }, 
+         {
+            "finishTime": "08h47m45s", 
+            "id": 4, 
+            "time": {
+               "cache": 419.125, 
+               "nocache": 426.474
+            }
+         }, 
+         {
+            "finishTime": "09h18m47s", 
+            "id": 5, 
+            "time": {
+               "cache": 413.549, 
+               "nocache": 418.654
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 2, 
+         "wn": 14
+      }
+   }, 
+   {
+      "avgTime": {
+         "cache": 353.891, 
+         "nocache": 361.673
+      }, 
+      "query": [
+         {
+            "finishTime": "07h29m02s", 
+            "id": 1, 
+            "time": {
+               "cache": 344.434, 
+               "nocache": 356.394
+            }
+         }, 
+         {
+            "finishTime": "08h00m33s", 
+            "id": 2, 
+            "time": {
+               "cache": 364.769, 
+               "nocache": 378.043
+            }
+         }, 
+         {
+            "finishTime": "08h31m33s", 
+            "id": 3, 
+            "time": {
+               "cache": 347.918, 
+               "nocache": 358.104
+            }
+         }, 
+         {
+            "finishTime": "09h02m46s", 
+            "id": 4, 
+            "time": {
+               "cache": 351.231, 
+               "nocache": 358.381
+            }
+         }, 
+         {
+            "finishTime": "09h34m14s", 
+            "id": 5, 
+            "time": {
+               "cache": 362.523, 
+               "nocache": 368.534
+            }
+         }
+      ], 
+      "schema": {
+         "dn": 2, 
+         "m": 4, 
+         "wn": 30
+      }
+   }
+]
