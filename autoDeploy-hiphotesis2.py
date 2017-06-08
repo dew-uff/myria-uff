@@ -53,7 +53,7 @@ def ingest_and_query(schema,path,fileQuery,fileDataset):
 	if (schema['wn']==0):
 		wn = dn
 	else:
-		wn = list(range(1,schema['dn']+schema['wn']+1))
+		wn = list(range(schema['dn']+1,schema['wn']+1))
 	alter_join(dn,wn,path,fileQuery)
 
 #funcao que executa chama o ingest e retorna um json
@@ -153,6 +153,12 @@ def getFullSchemas(qtdM,cores):
 		x = x * 2
 	return schemas
 
+def freeMemory(listMaq, x, s):
+	for node in listMaq:
+		cmd = subp.Popen('echo \'Rodada: '+str(x)+' - '+str(node)+'\' - \'Cenario: '+str(s['schema'])+' - Node: '+str(node)+'\' >> freeMemory.txt; ssh '+node+' \'free -m\' >> freeMemory.txt; echo \'-------------\' >> freeMemory.txt', stdout=subp.PIPE,stderr=subp.PIPE, shell=True)
+		while cmd.poll() is None:
+			time.sleep(2)
+
 def main():
 
 	#Obtem lista de maquinas, hostname e path
@@ -162,13 +168,13 @@ def main():
 	print("ListDN: ",listDN)
 
 	#Dfine nome dos arquivos de consulta e dataset
-	fileQuery = 'triangle_selfjoin-count.json'
+	fileQuery = 'triangle_count.json'
 	fileDataset = 'twitter.csv'
 
         #gera cenarios
         sample = 'hyphotesis'
         #schemas = getFullSchemas(len(listDN),len(listMaq)/len(listDN))
-	schemas = [{'wn':6,'dn':2,'m':2}, {'wn':4,'dn':4,'m':4}]
+	schemas = [{'wn':62,'dn':2,'m':8}, {'wn':60,'dn':4,'m':8}, {'wn':56,'dn':8,'m':8}]
 
 	#Define nome do arquivo com resultados
 	nameFileResult = pwd+'Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
@@ -188,7 +194,7 @@ def main():
 	for s in schemas:
 		avgTime.append({'schema': s,'query': []})
 
-	for x in range(1,2):
+	for x in range(1,6):
 
 		for s in avgTime:
 
@@ -232,6 +238,10 @@ def main():
 	                			print("Apagando arquivos temporários worker "+node+"...")
 	                			time.sleep(3)
 
+				#Log de memória livre	
+				os.chdir("/home_nfs/frankwrs/")
+				freeMemory(listDN, x, s)
+			
 				#seta o diretorio de deploy
 				os.chdir(path+"myriadeploy/")
 				#configura as máquinas para o deploy
@@ -284,7 +294,7 @@ def main():
 					#pipe query
 					timeQ = {}
 					t = 1
-					while t < 3:
+					while t < 2:
 						#Inicio da submissão de consulta
 						print "Submit query ",x,t
 						queryERROR = True
@@ -353,9 +363,10 @@ def main():
 
 	#calcula média das consultas para cada esquema
 	for s in avgTime:
-    		avgTimeQueryCache = (sum(t['time']['cache'] for t in s['query']) - max(t['time']['cache'] for t in s['query']) - min(t['time']['cache'] for t in s['query']))/(len(s['query'])-2)
+    		#avgTimeQueryCache = (sum(t['time']['cache'] for t in s['query']) - max(t['time']['cache'] for t in s['query']) - min(t['time']['cache'] for t in s['query']))/(len(s['query'])-2)
     		avgTimeQueryNoCache = (sum(t['time']['nocache'] for t in s['query']) - max(t['time']['nocache'] for t in s['query']) - min(t['time']['nocache'] for t in s['query']))/(len(s['query'])-2)
-    		s.update({'avgTime':{'cache': float("{0:.3f}".format(avgTimeQueryCache)), 'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
+    		#s.update({'avgTime':{'cache': float("{0:.3f}".format(avgTimeQueryCache)), 'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
+    		s.update({'avgTime':{'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
 
 	writeJson(nameFileResult,avgTime)
 
