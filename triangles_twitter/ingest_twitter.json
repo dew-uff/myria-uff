@@ -1,26 +1,34 @@
 {
-   "delimiter": " ",
-   "workers": [
-      1,
-      2
-   ],
+   "delimiter": " ", 
    "relationKey": {
-      "relationName": "twitter",
-      "programName": "triangles",
+      "programName": "triangles", 
+      "relationName": "twitter", 
       "userName": "valmeida"
-   },
-   "source": {
-      "dataType": "File",
-      "filename": "/home_nfs/frankwrs/myria/jsonQueries/triangles_twitter/twitter_small.csv"
-   },
+   }, 
    "schema": {
       "columnNames": [
-         "follower",
+         "follower", 
          "followee"
-      ],
+      ], 
       "columnTypes": [
-         "LONG_TYPE",
+         "LONG_TYPE", 
          "LONG_TYPE"
       ]
+   }, 
+   "shards": [
+      [
+         1, 
+         2, 
+         3
+      ], 
+      [
+         4, 
+         5, 
+         6
+      ]
+   ], 
+   "source": {
+      "dataType": "File", 
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/triangles_twitter/twitter.csv"
    }
 }

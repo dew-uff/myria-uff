@@ -1,143 +1,138 @@
 {
-   "language": "datalog",
-   "logicalRa": "Parallel[Store(valmeida:triangles:join_twitter)[Apply(x=$0,z=$3)[Join(($1 = $2))[Scan(valmeida:triangles:twitter),Scan(valmeida:triangles:twitter)]]]]",
-   "profilingMode": [],
-   "rawQuery": "A(x,z) :- R(x,y), R(y,z)",
-   "plan": {
-      "type": "SubQuery",
+   "logicalRa": "Parallel[Store(valmeida:triangles:join_twitter)[Apply(x=$0,z=$3)[Join(($1 = $2))[Scan(valmeida:triangles:twitter),Scan(valmeida:triangles:twitter)]]]]", 
       "fragments": [
          {
             "workers": [
-               1,
+               1, 
                2
-            ],
+            ], 
             "operators": [
                {
-                  "opId": 0,
-                  "opType": "LocalMultiwayConsumer",
-                  "argOperatorId": 1,
-                  "opName": "MyriaSplitConsumer"
-               },
+                  "opId": 0, 
+                  "opType": "LocalMultiwayConsumer", 
+                  "opName": "MyriaSplitConsumer", 
+                  "argOperatorId": 1
+               }, 
                {
+                  "opType": "DbInsert", 
+                  "argChild": 0, 
+                  "opId": 2, 
+                  "argOverwriteTable": true, 
+                  "opName": "MyriaStore(public:adhoc:A)", 
                   "relationKey": {
-                     "relationName": "join_twitter",
-                     "programName": "triangles",
-                     "userName": "valmeida"
-                  },
-                  "opId": 2,
-                  "argOverwriteTable": true,
-                  "opType": "DbInsert",
-                  "partitionFunction": null,
-                  "opName": "MyriaStore(public:adhoc:A)",
-                  "argChild": 0
+                     "userName": "valmeida", 
+                     "relationName": "join_twitter", 
+                     "programName": "triangles"
+                  }, 
+                  "partitionFunction": null
                }
             ]
-         },
+         }, 
          {
             "workers": [
-               1,
+               1, 
                2
-            ],
+            ], 
             "operators": [
                {
-                  "opId": 3,
-                  "opType": "ShuffleConsumer",
-                  "argOperatorId": 4,
-                  "opName": "MyriaShuffleConsumer"
-               },
+                  "opId": 3, 
+                  "opType": "ShuffleConsumer", 
+                  "opName": "MyriaShuffleConsumer", 
+                  "argOperatorId": 4
+               }, 
                {
-                  "opId": 5,
-                  "opType": "ShuffleConsumer",
-                  "argOperatorId": 6,
-                  "opName": "MyriaShuffleConsumer"
-               },
+                  "opId": 5, 
+                  "opType": "ShuffleConsumer", 
+                  "opName": "MyriaShuffleConsumer", 
+                  "argOperatorId": 6
+               }, 
                {
-                  "argChild2": "3",
-                  "argColumnNames": [
-                     "follower",
-                     "followee"
-                  ],
-                  "opName": "MyriaSymmetricHashJoin(($1 = $2); $0,$3)",
-                  "argColumns2": [
-                     0
-                  ],
-                  "opId": 7,
-                  "argSelect1": [
-                     0
-                  ],
-                  "opType": "SymmetricHashJoin",
-                  "argChild1": "5",
+                  "opType": "SymmetricHashJoin", 
                   "argColumns1": [
                      1
-                  ],
+                  ], 
+                  "argColumns2": [
+                     0
+                  ], 
+                  "argColumnNames": [
+                     "follower", 
+                     "followee"
+                  ], 
+                  "argChild2": "3", 
+                  "argChild1": "5", 
+                  "opName": "MyriaSymmetricHashJoin(($1 = $2); $0,$3)", 
                   "argSelect2": [
                      1
+                  ], 
+                  "opId": 7, 
+                  "argSelect1": [
+                     0
                   ]
-               },
+               }, 
                {
-                  "opId": 1,
-                  "opType": "LocalMultiwayProducer",
-                  "opName": "MyriaSplitProducer",
+                  "opId": 1, 
+                  "opType": "LocalMultiwayProducer", 
+                  "opName": "MyriaSplitProducer", 
                   "argChild": 7
                }
             ]
-         },
+         }, 
          {
             "workers": [
-               1,
+               1, 
                2
-            ],
+            ], 
             "operators": [
                {
-                  "opId": 8,
+                  "opId": 8, 
+                  "opType": "TableScan", 
                   "relationKey": {
-                     "relationName": "twitter",
-                     "programName": "triangles",
-                     "userName": "valmeida"
-                  },
-                  "opType": "TableScan",
+                     "userName": "valmeida", 
+                     "relationName": "twitter", 
+                     "programName": "triangles"
+                  }, 
                   "opName": "MyriaScan(public:adhoc:R)"
-               },
+               }, 
                {
-                  "opId": 6,
-                  "opType": "ShuffleProducer",
+                  "opId": 6, 
+                  "opType": "ShuffleProducer", 
+                  "opName": "MyriaShuffleProducer(h($1))", 
+                  "argChild": 8, 
                   "argPf": {
-                     "type": "SingleFieldHash",
-                     "index": 1
-                  },
-                  "opName": "MyriaShuffleProducer(h($1))",
-                  "argChild": 8
+                     "index": 1, 
+                     "type": "SingleFieldHash"
+                  }
                }
             ]
-         },
+         }, 
          {
             "workers": [
-               1,
+               1, 
                2
-            ],
+            ], 
             "operators": [
                {
-                  "opId": 9,
+                  "opId": 9, 
+                  "opType": "TableScan", 
                   "relationKey": {
-                     "relationName": "twitter",
-                     "programName": "triangles",
-                     "userName": "valmeida"
-                  },
-                  "opType": "TableScan",
+                     "userName": "valmeida", 
+                     "relationName": "twitter", 
+                     "programName": "triangles"
+                  }, 
                   "opName": "MyriaScan(public:adhoc:R)"
-               },
+               }, 
                {
-                  "opId": 4,
-                  "opType": "ShuffleProducer",
+                  "opId": 4, 
+                  "opType": "ShuffleProducer", 
+                  "opName": "MyriaShuffleProducer(h($0))", 
+                  "argChild": 9, 
                   "argPf": {
-                     "type": "SingleFieldHash",
-                     "index": 0
-                  },
-                  "opName": "MyriaShuffleProducer(h($0))",
-                  "argChild": 9
+                     "index": 0, 
+                     "type": "SingleFieldHash"
+                  }
                }
             ]
          }
-      ]
-   }
+      ], 
+   "rawQuery": "A(x,z) :- R(x,y), R(y,z)"
 }
