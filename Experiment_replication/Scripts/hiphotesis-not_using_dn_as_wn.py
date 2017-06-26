@@ -54,7 +54,8 @@ def ingest_and_query(schema,path,fileQuery,fileDataset):
 		i = i + schema['rf']
 	alter_ingest(shards,path,fileDataset)
 	#join
-	wn = list(range(1,schema['wn']+1))
+	dn = schema['ns'] * schema['rf']
+	wn = list(range(dn+1,dn+schema['wn']+1))
 	alter_join(wn,path,fileQuery)
 
 #funcao que executa chama o ingest e retorna um json
@@ -158,9 +159,9 @@ def main():
 	pathDN = '/var/usuarios/frankwrs/myria-files/DN'
 
     	#gera cenarios
-    	sample = 'hyphotesis-rep'
+    	sample = 'hyphotesis-rep-DN'
     	#schemas = getSchemas(len(listDN),len(listMaq)/len(listDN))
-	schemas = [{'m':4,'ns':2,'rf':2,'wn':16}, {'m':4,'ns':4,'rf':1,'wn':16}]
+	schemas = [{'m':4,'ns':2,'rf':2,'wn':12}, {'m':4,'ns':4,'rf':1,'wn':12}]
 
 	#Define nome do arquivo com resultados
 	nameFileResult = pwd+'Experiment_replication/Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
@@ -191,8 +192,9 @@ def main():
 			#Gera lista de nós/nucleos para o deploy
 			listDeploy = []
 			dn = 1
-			for i in range(0,s['schema']['wn']):
-				if dn <= (s['schema']['ns']*s['schema']['rf']):
+			qdn = s['schema']['ns']*s['schema']['rf']
+			for i in range(0,s['schema']['wn']+qdn):
+				if dn <= (qdn):
 					node = str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port)+':'+pathDN
 					dn += 1
 				else:
@@ -252,13 +254,13 @@ def main():
 				#print(workers)
 				#testa se os workers estao todos ativos
 				w = 0
-				for i in range(1,s['schema']['wn']+1):
+				for i in range(1,s['schema']['wn']+qdn+1):
 					if str(i) not in workers:
 						print("Worker ",i," not alive only ",workers)
 					else:
 						w += 1
 
-				if w == s['schema']['wn']:
+				if w == s['schema']['wn']+qdn:
 					errorDeploy = False
 
 				if not errorDeploy:
