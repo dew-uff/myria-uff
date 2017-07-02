@@ -1,0 +1,239 @@
+{
+    "ftMode": "NONE",
+    "language": "myrial",
+    "logicalRa": "Store(public:adhoc:q6)[Apply(revenue=$0)[GroupBy(; SUM($0))[Apply(_COLUMN0_=($5 * $6))[Select(((((($4 < 24) and ($6 <= (0.06 + 0.01))) and ($6 >= (0.06 - 0.01))) and ($10 < \"1995-01-01\")) and ($10 >= \"1994-01-01\")))[Scan(public:adhoc:LINEITEM)]]]]]",
+    "plan": {
+        "fragments": [
+            {
+                "operators": [
+                    {
+                        "argOperatorId": 1,
+                        "opId": 0,
+                        "opName": "MyriaSplitConsumer",
+                        "opType": "LocalMultiwayConsumer"
+                    },
+                    {
+                        "argChild": 0,
+                        "emitExpressions": [
+                            {
+                                "outputName": "revenue",
+                                "rootExpressionOperator": {
+                                    "columnIdx": 0,
+                                    "type": "VARIABLE"
+                                }
+                            }
+                        ],
+                        "opId": 2,
+                        "opName": "MyriaApply(revenue=$0)",
+                        "opType": "Apply"
+                    },
+                    {
+                        "argChild": 2,
+                        "argOverwriteTable": true,
+                        "distributeFunction": {
+                            "type": "RoundRobin"
+                        },
+                        "opId": 3,
+                        "opName": "MyriaStore(public:adhoc:q6)",
+                        "opType": "DbInsert",
+                        "relationKey": {
+                            "programName": "adhoc",
+                            "relationName": "q6",
+                            "userName": "public"
+                        }
+                    }
+                ]
+            },
+            {
+                "operators": [
+                    {
+                        "argOperatorId": 5,
+                        "opId": 4,
+                        "opName": "MyriaCollectConsumer",
+                        "opType": "CollectConsumer"
+                    },
+                    {
+                        "aggregators": [
+                            {
+                                "aggOps": [
+                                    "SUM"
+                                ],
+                                "column": 0,
+                                "type": "Primitive"
+                            }
+                        ],
+                        "argChild": 4,
+                        "argGroupFields": [],
+                        "opId": 6,
+                        "opName": "MyriaGroupBy(; SUM($0))",
+                        "opType": "Aggregate"
+                    },
+                    {
+                        "argChild": 6,
+                        "opId": 1,
+                        "opName": "MyriaSplitProducer",
+                        "opType": "LocalMultiwayProducer"
+                    }
+                ]
+            },
+            {
+                "operators": [
+                    {
+                        "debroadcast": false,
+                        "opId": 7,
+                        "opName": "MyriaScan(public:adhoc:LINEITEM)",
+                        "opType": "TableScan",
+                        "relationKey": {
+                            "programName": "adhoc",
+                            "relationName": "LINEITEM",
+                            "userName": "public"
+                        }
+                    },
+                    {
+                        "argChild": 7,
+                        "argPredicate": {
+                            "rootExpressionOperator": {
+                                "left": {
+                                    "left": {
+                                        "left": {
+                                            "left": {
+                                                "left": {
+                                                    "columnIdx": 10,
+                                                    "type": "VARIABLE"
+                                                },
+                                                "right": {
+                                                    "type": "CONSTANT",
+                                                    "value": "1994-01-01",
+                                                    "valueType": "STRING_TYPE"
+                                                },
+                                                "type": "GTEQ"
+                                            },
+                                            "right": {
+                                                "left": {
+                                                    "columnIdx": 10,
+                                                    "type": "VARIABLE"
+                                                },
+                                                "right": {
+                                                    "type": "CONSTANT",
+                                                    "value": "1995-01-01",
+                                                    "valueType": "STRING_TYPE"
+                                                },
+                                                "type": "LT"
+                                            },
+                                            "type": "AND"
+                                        },
+                                        "right": {
+                                            "left": {
+                                                "columnIdx": 6,
+                                                "type": "VARIABLE"
+                                            },
+                                            "right": {
+                                                "left": {
+                                                    "type": "CONSTANT",
+                                                    "value": "0.06",
+                                                    "valueType": "DOUBLE_TYPE"
+                                                },
+                                                "right": {
+                                                    "type": "CONSTANT",
+                                                    "value": "0.01",
+                                                    "valueType": "DOUBLE_TYPE"
+                                                },
+                                                "type": "MINUS"
+                                            },
+                                            "type": "GTEQ"
+                                        },
+                                        "type": "AND"
+                                    },
+                                    "right": {
+                                        "left": {
+                                            "columnIdx": 6,
+                                            "type": "VARIABLE"
+                                        },
+                                        "right": {
+                                            "left": {
+                                                "type": "CONSTANT",
+                                                "value": "0.06",
+                                                "valueType": "DOUBLE_TYPE"
+                                            },
+                                            "right": {
+                                                "type": "CONSTANT",
+                                                "value": "0.01",
+                                                "valueType": "DOUBLE_TYPE"
+                                            },
+                                            "type": "PLUS"
+                                        },
+                                        "type": "LTEQ"
+                                    },
+                                    "type": "AND"
+                                },
+                                "right": {
+                                    "left": {
+                                        "columnIdx": 4,
+                                        "type": "VARIABLE"
+                                    },
+                                    "right": {
+                                        "type": "CONSTANT",
+                                        "value": "24",
+                                        "valueType": "LONG_TYPE"
+                                    },
+                                    "type": "LT"
+                                },
+                                "type": "AND"
+                            }
+                        },
+                        "opId": 8,
+                        "opName": "MyriaSelect(((((($10 >= \"1994-01-01\") and ($10 < \"1995-01-01\")) and ($6 >= (0.06 - 0.01))) and ($6 <= (0.06 + 0.01))) and ($4 < 24)))",
+                        "opType": "Filter"
+                    },
+                    {
+                        "argChild": 8,
+                        "emitExpressions": [
+                            {
+                                "outputName": "_COLUMN0_",
+                                "rootExpressionOperator": {
+                                    "left": {
+                                        "columnIdx": 5,
+                                        "type": "VARIABLE"
+                                    },
+                                    "right": {
+                                        "columnIdx": 6,
+                                        "type": "VARIABLE"
+                                    },
+                                    "type": "TIMES"
+                                }
+                            }
+                        ],
+                        "opId": 9,
+                        "opName": "MyriaApply(_COLUMN0_=($5 * $6))",
+                        "opType": "Apply"
+                    },
+                    {
+                        "aggregators": [
+                            {
+                                "aggOps": [
+                                    "SUM"
+                                ],
+                                "column": 0,
+                                "type": "Primitive"
+                            }
+                        ],
+                        "argChild": 9,
+                        "argGroupFields": [],
+                        "opId": 10,
+                        "opName": "MyriaGroupBy(; SUM($0))",
+                        "opType": "Aggregate"
+                    },
+                    {
+                        "argChild": 10,
+                        "opId": 5,
+                        "opName": "MyriaCollectProducer(@None)",
+                        "opType": "CollectProducer"
+                    }
+                ]
+            }
+        ],
+        "type": "SubQuery"
+    },
+    "profilingMode": [],
+    "rawQuery": "lineitem = scan('LINEITEM');\n\n-- $ID$\n-- TPC-H/TPC-R Forecasting Revenue Change Query (Q6)\n-- Functional Query Definition\n-- Approved February 1998\nq6 = select\n\tsum(L_EXTENDEDPRICE * L_DISCOUNT) as revenue\nfrom\n\tlineitem\nwhere\n\tL_SHIPDATE >=  \"1994-01-01\"\n\tand L_SHIPDATE < \"1995-01-01\"\n\tand L_DISCOUNT >= 0.06 - 0.01\n    and L_DISCOUNT <= 0.06 + 0.01\n\tand L_QUANTITY < 24;\n\nstore(q6, q6);"
+}
