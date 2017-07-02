@@ -34,11 +34,12 @@ def alter_join(wn,path,fileQuery):
 	writeJson(path,data)
 
 #funcao para alterar o json do ingest
-def alter_ingest(shards,path,fileDataset):
+def alter_ingest(schema,path,fileDataset):
 	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
 	with open(path_) as ingest:
 		data = json.load(ingest)
-	data['shards'] = shards
+	data['numShards'] = schema['ns']
+	data['repFactor'] = schema['rf']
 	data['source']['filename'] = path+'jsonQueries/triangles_twitter/'+fileDataset
 	writeJson(path_,data)
 
@@ -47,12 +48,12 @@ def alter_ingest(shards,path,fileDataset):
 def ingest_and_query(schema,path,fileQuery,fileDataset):
 	#schema = ns, rf, wn
 	#ingest
-	shards = []
-	i = 1
-	for x in range(1,schema['ns']+1):
-		shards.append(list(range(i,i+schema['rf'])))
-		i = i + schema['rf']
-	alter_ingest(shards,path,fileDataset)
+	#shards = []
+	#i = 1
+	#for x in range(1,schema['ns']+1):
+		#shards.append(list(range(i,i+schema['rf'])))
+		#i = i + schema['rf']
+	alter_ingest(schema,path,fileDataset)
 	#join
 	dn = schema['ns'] * schema['rf']
 	wn = list(range(dn+1,dn+schema['wn']+1))
@@ -154,14 +155,14 @@ def main():
 	print("ListDN: ",listDN)
 
 	#Dfine nome dos arquivos de consulta e dataset
-	fileQuery = 'twitter_selfjoin-count.json'
+	fileQuery = 'triangle_count.json'
 	fileDataset = 'twitter.csv'
 	pathDN = '/var/usuarios/frankwrs/myria-files/DN'
 
     	#gera cenarios
     	sample = 'hyphotesis-rep-DN'
     	#schemas = getSchemas(len(listDN),len(listMaq)/len(listDN))
-	schemas = [{'m':4,'ns':2,'rf':2,'wn':12}, {'m':4,'ns':4,'rf':1,'wn':12}]
+	schemas = [{'m':4,'ns':2,'rf':2,'wn':28}, {'m':4,'ns':4,'rf':1,'wn':28}]
 
 	#Define nome do arquivo com resultados
 	nameFileResult = pwd+'Experiment_replication/Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'

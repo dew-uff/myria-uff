@@ -34,12 +34,11 @@ def alter_join(wn,path,fileQuery):
 	writeJson(path,data)
 
 #funcao para alterar o json do ingest
-def alter_ingest(schema,path,fileDataset):
+def alter_ingest(shards,path,fileDataset):
 	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
 	with open(path_) as ingest:
 		data = json.load(ingest)
-	data['numShards'] = schema['ns']
-	data['repFactor'] = schema['rf']
+	data['shards'] = shards
 	data['source']['filename'] = path+'jsonQueries/triangles_twitter/'+fileDataset
 	writeJson(path_,data)
 
@@ -48,12 +47,12 @@ def alter_ingest(schema,path,fileDataset):
 def ingest_and_query(schema,path,fileQuery,fileDataset):
 	#schema = ns, rf, wn
 	#ingest
-	#shards = []
-	#i = 1
-	#for x in range(1,schema['ns']+1):
-		#shards.append(list(range(i,i+schema['rf'])))
-		#i = i + schema['rf']
-	alter_ingest(schema,path,fileDataset)
+	shards = []
+	i = 1
+	for x in range(1,schema['ns']+1):
+		shards.append(list(range(i,i+schema['rf'])))
+		i = i + schema['rf']
+	alter_ingest(shards,path,fileDataset)
 	#join
 	wn = list(range(1,schema['wn']+1))
 	alter_join(wn,path,fileQuery)
@@ -154,7 +153,7 @@ def main():
 	print("ListDN: ",listDN)
 
 	#Dfine nome dos arquivos de consulta e dataset
-	fileQuery = 'triangle_count.json'
+	fileQuery = 'twitter_selfjoin-count.json'
 	fileDataset = 'twitter.csv'
 	pathDN = '/var/usuarios/frankwrs/myria-files/DN'
 
@@ -191,13 +190,8 @@ def main():
 
 			#Gera lista de nós/nucleos para o deploy
 			listDeploy = []
-			dn = 1
 			for i in range(0,s['schema']['wn']):
-				if dn <= (s['schema']['ns']*s['schema']['rf']):
-					node = str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port)+':'+pathDN
-					dn += 1
-				else:
-					node = str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port)
+				node = str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port)
 				listDeploy.append(node)
 				port+=1
 
