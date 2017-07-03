@@ -1,0 +1,26 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpch",
+      "relationName": "region",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "R_REGIONKEY",
+         "R_NAME",
+         "R_COMMENT",
+         "R_RANDOM"
+      ],
+      "columnTypes": [
+         "LONG_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpch/region.tbl"
+   }
+}

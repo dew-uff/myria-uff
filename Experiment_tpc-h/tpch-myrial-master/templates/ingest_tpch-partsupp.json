@@ -1,0 +1,30 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpch",
+      "relationName": "partsupp",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "PS_PARTKEY",
+         "PS_SUPPKEY",
+         "PS_AVAILQTY",
+         "PS_SUPPLYCOST",
+         "PS_COMMENT",
+         "PS_RANDOM"
+      ],
+      "columnTypes": [
+         "LONG_TYPE",
+         "LONG_TYPE",
+         "LONG_TYPE",
+         "DOUBLE_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpch/partsupp.tbl"
+   }
+}

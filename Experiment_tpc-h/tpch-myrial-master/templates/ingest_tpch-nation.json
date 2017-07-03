@@ -1,0 +1,28 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpch",
+      "relationName": "nation",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "N_NATIONKEY",
+         "N_NAME",
+         "N_REGIONKEY",
+         "N_COMMENT",
+         "N_RANDOM"
+      ],
+      "columnTypes": [
+         "LONG_TYPE",
+         "STRING_TYPE",
+         "LONG_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpch/nation.tbl"
+   }
+}
