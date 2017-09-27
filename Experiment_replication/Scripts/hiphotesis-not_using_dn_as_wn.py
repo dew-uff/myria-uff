@@ -34,12 +34,29 @@ def alter_join(wn,path,fileQuery):
 	writeJson(path,data)
 
 #funcao para alterar o json do ingest
-def alter_ingest(schema,path,fileDataset):
+def alter_ingest(schema,path,fileDataset,shards):
 	path_ = path+'jsonQueries/triangles_twitter/ingest_twitter.json'
 	with open(path_) as ingest:
 		data = json.load(ingest)
-	data['numShards'] = schema['ns']
-	data['repFactor'] = schema['rf']
+	try:
+                if data['numShards']:
+                        del data['numShards']
+        except KeyError: print ""
+        try:
+                if data['repFactor']:
+                        del data['repFactor']
+        except KeyError: print ""
+        try:
+                if data['shards']:
+                        del data['shards']
+        except KeyError: print ""
+        try:
+                if data['workers']:
+                        del data['workers']
+        except KeyError: print ""
+        #data['numShards'] = schema['ns']
+        #data['repFactor'] = schema['rf']
+        data['shards'] = shards
 	data['source']['filename'] = path+'jsonQueries/triangles_twitter/'+fileDataset
 	writeJson(path_,data)
 
@@ -48,12 +65,12 @@ def alter_ingest(schema,path,fileDataset):
 def ingest_and_query(schema,path,fileQuery,fileDataset):
 	#schema = ns, rf, wn
 	#ingest
-	#shards = []
-	#i = 1
-	#for x in range(1,schema['ns']+1):
-		#shards.append(list(range(i,i+schema['rf'])))
-		#i = i + schema['rf']
-	alter_ingest(schema,path,fileDataset)
+	shards = []
+	i = 1
+	for x in range(1,schema['ns']+1):
+		shards.append(list(range(i,i+schema['rf'])))
+		i = i + schema['rf']
+	alter_ingest(schema,path,fileDataset,shards)
 	#join
 	dn = schema['ns'] * schema['rf']
 	wn = list(range(dn+1,dn+schema['wn']+1))
@@ -138,7 +155,7 @@ def getSchemas(qtdM,cores):
 	    while (ns <= m):
 	        rf = 1
 	        while ((ns*rf) <= m):
-	            data = {'m':m,'ns':ns,'rf':rf,'wn':m*cores}
+	            data = {'m':m,'ns':ns,'rf':rf,'wn':(m*cores)-(ns*rf)}
 	            schemas.append(data)
 	            rf += 1
 	        ns *= 2
@@ -154,15 +171,17 @@ def main():
 	print("Master: ",master)
 	print("ListDN: ",listDN)
 
-	#Dfine nome dos arquivos de consulta e dataset
-	fileQuery = 'triangle_count.json'
-	fileDataset = 'twitter.csv'
-	pathDN = '/var/usuarios/frankwrs/myria-files/DN'
+	#Define nome dos arquivos de consulta e dataset
+        fileQuery = 'triangle_count.json'
+        #fileQuery = 'twitter_selfjoin-count.json'
+        fileDataset = 'twitter.csv'
+        #fileDataset = 'twitter_small.csv'
+        pathDN = '/var/usuarios/frankwrs/myria-files/DN'
 
     	#gera cenarios
     	sample = 'hyphotesis-rep-DN'
-    	#schemas = getSchemas(len(listDN),len(listMaq)/len(listDN))
-	schemas = [{'m':4,'ns':2,'rf':2,'wn':28}, {'m':4,'ns':4,'rf':1,'wn':28}]
+    	schemas = getSchemas(len(listDN),len(listMaq)/len(listDN))
+	#schemas = [{'m':4,'ns':2,'rf':2,'wn':28}, {'m':4,'ns':4,'rf':1,'wn':28}]
 
 	#Define nome do arquivo com resultados
 	nameFileResult = pwd+'Experiment_replication/Results/'+sample+'_'+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+'_nodes'+str(len(listDN))+'-cpn'+str(len(listMaq)/len(listDN))+'_DS-'+fileDataset.strip('.csv')+'_Q-'+fileQuery.strip('.json')+'.json'
@@ -285,7 +304,7 @@ def main():
 					#pipe query
 					timeQ = {}
 					t = 1
-					while t < 3:
+					while t < 2:
 						#Inicio da submissão de consulta
 						print "Submit query ",x,t
 						queryERROR = True
@@ -354,9 +373,10 @@ def main():
 
 	#calcula média das consultas para cada esquema
 	for s in avgTime:
-    		avgTimeQueryCache = (sum(t['time']['cache'] for t in s['query']) - max(t['time']['cache'] for t in s['query']) - min(t['time']['cache'] for t in s['query']))/(len(s['query'])-2)
+    		#avgTimeQueryCache = (sum(t['time']['cache'] for t in s['query']) - max(t['time']['cache'] for t in s['query']) - min(t['time']['cache'] for t in s['query']))/(len(s['query'])-2)
     		avgTimeQueryNoCache = (sum(t['time']['nocache'] for t in s['query']) - max(t['time']['nocache'] for t in s['query']) - min(t['time']['nocache'] for t in s['query']))/(len(s['query'])-2)
-    		s.update({'avgTime':{'cache': float("{0:.3f}".format(avgTimeQueryCache)), 'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
+    		s.update({'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))})
+    		#s.update({'avgTime':{'cache': float("{0:.3f}".format(avgTimeQueryCache)), 'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
 
 	writeJson(nameFileResult,avgTime)
 

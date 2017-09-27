@@ -1,0 +1,194 @@
+[
+   {
+      "avgTime": {
+         "nocache": 436.22
+      }, 
+      "query": [
+         {
+            "finishTime": "21h37m38s", 
+            "id": 1, 
+            "time": {
+               "nocache": 431.536
+            }
+         }, 
+         {
+            "finishTime": "22h17m01s", 
+            "id": 2, 
+            "time": {
+               "nocache": 437.732
+            }
+         }, 
+         {
+            "finishTime": "22h56m30s", 
+            "id": 3, 
+            "time": {
+               "nocache": 439.391
+            }
+         }, 
+         {
+            "finishTime": "23h35m48s", 
+            "id": 4, 
+            "time": {
+               "nocache": 442.293
+            }
+         }, 
+         {
+            "finishTime": "00h14m48s", 
+            "id": 5, 
+            "time": {
+               "nocache": 429.977
+            }
+         }
+      ], 
+      "schema": {
+         "m": 2, 
+         "ns": 2, 
+         "rf": 1, 
+         "wn": 16
+      }
+   }, 
+   {
+      "avgTime": {
+         "nocache": 363.284
+      }, 
+      "query": [
+         {
+            "finishTime": "21h47m30s", 
+            "id": 1, 
+            "time": {
+               "nocache": 363.876
+            }
+         }, 
+         {
+            "finishTime": "22h26m50s", 
+            "id": 2, 
+            "time": {
+               "nocache": 360.418
+            }
+         }, 
+         {
+            "finishTime": "23h06m19s", 
+            "id": 3, 
+            "time": {
+               "nocache": 359.388
+            }
+         }, 
+         {
+            "finishTime": "23h45m34s", 
+            "id": 4, 
+            "time": {
+               "nocache": 365.557
+            }
+         }, 
+         {
+            "finishTime": "00h24m52s", 
+            "id": 5, 
+            "time": {
+               "nocache": 372.409
+            }
+         }
+      ], 
+      "schema": {
+         "m": 4, 
+         "ns": 2, 
+         "rf": 1, 
+         "wn": 32
+      }
+   }, 
+   {
+      "avgTime": {
+         "nocache": 361.779
+      }, 
+      "query": [
+         {
+            "finishTime": "21h57m31s", 
+            "id": 1, 
+            "time": {
+               "nocache": 368.332
+            }
+         }, 
+         {
+            "finishTime": "22h36m52s", 
+            "id": 2, 
+            "time": {
+               "nocache": 365.146
+            }
+         }, 
+         {
+            "finishTime": "23h16m19s", 
+            "id": 3, 
+            "time": {
+               "nocache": 357.848
+            }
+         }, 
+         {
+            "finishTime": "23h55m26s", 
+            "id": 4, 
+            "time": {
+               "nocache": 350.553
+            }
+         }, 
+         {
+            "finishTime": "00h34m53s", 
+            "id": 5, 
+            "time": {
+               "nocache": 362.343
+            }
+         }
+      ], 
+      "schema": {
+         "m": 4, 
+         "ns": 2, 
+         "rf": 2, 
+         "wn": 32
+      }
+   }, 
+   {
+      "avgTime": {
+         "nocache": 353.272
+      }, 
+      "query": [
+         {
+            "finishTime": "22h07m17s", 
+            "id": 1, 
+            "time": {
+               "nocache": 349.854
+            }
+         }, 
+         {
+            "finishTime": "22h46m47s", 
+            "id": 2, 
+            "time": {
+               "nocache": 360.48
+            }
+         }, 
+         {
+            "finishTime": "23h26m04s", 
+            "id": 3, 
+            "time": {
+               "nocache": 354.958
+            }
+         }, 
+         {
+            "finishTime": "00h05m18s", 
+            "id": 4, 
+            "time": {
+               "nocache": -86045.345
+            }
+         }, 
+         {
+            "finishTime": "00h44m51s", 
+            "id": 5, 
+            "time": {
+               "nocache": 355.003
+            }
+         }
+      ], 
+      "schema": {
+         "m": 4, 
+         "ns": 4, 
+         "rf": 1, 
+         "wn": 32
+      }
+   }
+]
