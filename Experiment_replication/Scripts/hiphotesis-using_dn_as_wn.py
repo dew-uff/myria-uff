@@ -10,6 +10,7 @@ import subprocess as subp
 import os
 import time
 import datetime
+import sys
 
 #funcao para escrever em json
 def writeJson(path,js):
@@ -148,7 +149,7 @@ def prepareDeploy(path, master,listDeploy,port):
 def getSchemas(qtdM,cores):
 	# schema = Xm_Ywn_Zns_Krf
 	schemas = []
-	m = 2
+	m = 8
 	while m <= qtdM:
 	    ns = 2
 	    while (ns <= m):
@@ -161,7 +162,7 @@ def getSchemas(qtdM,cores):
 	    m *= 2
 	return schemas
 
-def main():
+def main(fileQuery,fileDataset):
 
 	#Obtem lista de maquinas, hostname e path
 	pwd = '/home_nfs/frankwrs/'
@@ -171,10 +172,14 @@ def main():
 	print("ListDN: ",listDN)
 
 	#Define nome dos arquivos de consulta e dataset
-	fileQuery = 'triangle_count.json'
-	#fileQuery = 'twitter_selfjoin-count.json'
-	fileDataset = 'twitter.csv'
-	#fileDataset = 'twitter_small.csv'
+	if fileQuery == "c2":
+		fileQuery = 'triangle_count.json'
+	else:
+		fileQuery = 'twitter_selfjoin-count.json'
+	if fileDataset == "full":
+		fileDataset = 'twitter.csv'
+	else:
+		fileDataset = 'twitter_small.csv'
 	pathDN = '/var/usuarios/frankwrs/myria-files/DN'
 
     	#gera cenarios
@@ -377,4 +382,4 @@ def main():
     		s.update({'avgTime':{'nocache': float("{0:.3f}".format(avgTimeQueryNoCache))}})
 	writeJson(nameFileResult,avgTime)
 
-if __name__ == "__main__": main()
+if __name__ == "__main__": main(sys.argv[1], sys.argv[2])
