@@ -73,7 +73,8 @@ def ingest_and_query(schema,path,fileQuery,fileDataset):
 		i = i + schema['rf']
 	alter_ingest(schema,path,fileDataset,shards)
 	#join
-	wn = list(range(1,schema['wn']+1))
+	dn = schema['ns']*schema['rf']
+	wn = list(range(1,dn+schema['wn']+1))
 	alter_join(wn,path,fileQuery)
 
 #funcao que executa chama o ingest e retorna um json
@@ -96,12 +97,14 @@ def callIngest(cmd):
 def callQuery(cmd):
 	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
 	time.sleep(5)
-	if pipe.poll() not is None:
+	if not pipe.poll() is None:
 		outPipe = pipe.stdout.read()
-		if not isinstance(outPipe,str):
+		if isinstance(outPipe,str):
 			if '{' in outPipe:
 				outPipe = json.loads(outPipe[outPipe.find('{',0):])
 				return 'ok', outPipe
+			else:
+				return 'error', outPipe
 		else:
 			return 'error', outPipe
 	else:
@@ -152,20 +155,29 @@ def prepareDeploy(path, master,listDeploy,port):
 def getSchemas(qtdM,cores):
 	# schema = Xm_Ywn_Zns_Krf
 	schemas = []
-	m = 8
+	m = 2
 	while m <= qtdM:
 	    ns = 2
 	    while (ns <= m):
 	        rf = 1
 	        while ((ns*rf) <= m):
-	            data = {'m':m,'ns':ns,'rf':rf,'wn':m*cores}
-	            schemas.append(data)
-	            rf += 1
+			wn = 0
+			t = 1
+			while((ns*rf)+wn <= (m*cores)):
+				if((ns*rf)+wn <= m):
+					tp = 'baseline'
+				else:
+					tp = 'evaluation'
+				data = {'m':m,'ns':ns,'rf':rf,'wn':wn,'type':tp}
+	            		schemas.append(data)
+				wn += ns*rf*t
+				t *= 2
+	            	rf += 1
 	        ns *= 2
 	    m *= 2
 	return schemas
 
-def deployMyria(stopAll, cleanAll, setupCluster, startDeploy, path, master, listDN):
+def deployMyria(stopAll, cleanAll, setupCluster, startDeploy, path, master, listDN, s):
 
 	setup_cluster = ['./setup_cluster.py deployment.cfg']
 	deploy = ['./launch_cluster.sh deployment.cfg']
@@ -220,15 +232,17 @@ def deployMyria(stopAll, cleanAll, setupCluster, startDeploy, path, master, list
 	#print(workers)
 	#testa se os workers estao todos ativos
 	w = 0
-	for i in range(1,s['schema']['wn']+1):
+	nosTotais = (s['schema']['ns']*s['schema']['rf'])+s['schema']['wn']
+	for i in range(1,nosTotais+1):
 		if str(i) not in workers:
 			print("Worker ",i," not alive only ",workers)
 		else:
 			w += 1
 
-	if w == s['schema']['wn']:
+	if w == nosTotais:
 		errorDeploy = False
-	else
+		print("Workers alive: "+workers)
+	else:
 		errorDeploy = True
 
 	return errorDeploy
@@ -280,7 +294,8 @@ def main(fileQuery,fileDataset):
 			#Gera lista de nós/nucleos para o deploy
 			listDeploy = []
 			dn = 1
-			for i in range(0,s['schema']['wn']):
+			nosTotais = (s['schema']['ns']*s['schema']['rf'])+s['schema']['wn']
+			for i in range(0,nosTotais):
 				if dn <= (s['schema']['ns']*s['schema']['rf']):
 					node = str(i+1)+' = '+str(listDN[i%len(listDN[0:s['schema']['m']])])+':'+str(port)+':'+pathDN
 					dn += 1
@@ -298,11 +313,10 @@ def main(fileQuery,fileDataset):
 			while errorDeploy:
 
 				#Deploy Myria
-				errorDeploy = deployMyria(True, True, True, True, path, master, listDN)
+				errorDeploy = deployMyria(True, True, True, True, path, master, listDN,s)
 
 				if not errorDeploy:
 
-					print("Workers alive: "+workers)
 
 					#seta o diretorio do ingest e query
 					os.chdir(path+"jsonQueries/triangles_twitter/")
@@ -324,8 +338,8 @@ def main(fileQuery,fileDataset):
 					queryERROR = True
 					while queryERROR:
 						cmd = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\" -d @./'+fileQuery]
-						s, outQuery = callQuery(cmd)
-						if s = 'ok':
+						sq, outQuery = callQuery(cmd)
+						if sq == 'ok':
 							if outQuery["status"] == "ACCEPTED":
 								#print(outQuery['status'])
 								queryID = outQuery['queryId']
@@ -340,9 +354,9 @@ def main(fileQuery,fileDataset):
 						print "get query time ",x
 						#pipe query time
 						getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(queryID)
-						s, outGetQuery = callQuery(cmd)
+						sq, outGetQuery = callQuery(getQuery)
 						#st = datetime.datetime.now()
-						if s = 'ok':
+						if sq == 'ok':
 							while (outGetQuery['status'] != 'SUCCESS'):
 								print("Status query: "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
 								if outGetQuery['status'] == 'SUCCESS':
@@ -350,14 +364,16 @@ def main(fileQuery,fileDataset):
 									queryERROR = False
 								elif outGetQuery['status'] == 'RUNNING':
 									time.sleep(10)
-									s, outGetQuery = callQuery(getQuery)
-									while s = 'error':
+									sq, outGetQuery = callQuery(getQuery)
+									while sq == 'error':
 										#totaltime = (datetime.datetime.now() - st).total_seconds()
+										print("Bug Myria, sleeping...  - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+										time.sleep(720)
 										#Deploy Myria
 										errorDeploy = True
 										while errorDeploy:
-											errorDeploy = deployMyria(True, False, False, True, path, master, listDN)
-										s, outGetQuery = callQuery(getQuery)
+											errorDeploy = deployMyria(True, False, False, True, path, master, listDN,s)
+										sq, outGetQuery = callQuery(getQuery)
 								else:
 										print outGetQuery['status']
 										queryERROR = True
@@ -377,7 +393,7 @@ def main(fileQuery,fileDataset):
 						timeQuery = (ft - st).total_seconds()
 
 					if (not queryERROR) and (not errorDeploy):
-						print timeQ
+						print timeQuery
 						s['query'].append({'id':x,'time':timeQuery,'finishTime':time.strftime("%Hh%Mm%Ss")})
 
 						#Salva resultados no cenário no arquivo
