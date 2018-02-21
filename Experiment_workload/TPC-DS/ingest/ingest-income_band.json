@@ -1,0 +1,24 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "income_band",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "ib_income_band_sk",
+         "ib_lower_bound",
+         "ib_upper_bound"
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/income_band.dat"
+   }
+}

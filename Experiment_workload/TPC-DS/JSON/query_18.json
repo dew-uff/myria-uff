@@ -1,0 +1,593 @@
+{
+    "fragments": [
+        {
+            "operators": [
+                {
+                    "opId": 1,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "date_dim",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 2,
+                    "argChild": 1,
+                    "opType": "Filter",
+                    "argPredicate": {
+                        "rootExpressionOperator": {
+                            "type": "EQ",
+                            "right": {
+                                "type": "CONSTANT",
+                                "value": "1999Q1",
+                                "valueType": "STRING_TYPE"
+                            },
+                            "left": {
+                                "type": "VARIABLE",
+                                "columnIdx": 15
+                            }
+                        }
+                    }
+                },
+                {
+                    "opId": 3,
+                    "argChild": 2,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 4,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "store_returns",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 5,
+                    "argChild": 4,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 6,
+                    "argOperatorId": 3,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 7,
+                    "argOperatorId": 5,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 8,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 6,
+                    "argChild2": 7,
+                    "argColumns1": [
+                        0
+                    ],
+                    "argColumns2": [
+                        0
+                    ],
+                    "argSelect1": [
+                        0
+                    ],
+                    "argSelect2": [
+                        0, 2, 3, 9, 10
+                    ]
+                },
+                {
+                    "opId": 9,
+                    "opType": "ShuffleProducer",
+                    "argChild": 8,
+                    "argPf": {
+                        "indexes": [
+                            2, 3
+                        ],
+                        "type": "MultiFieldHash"
+                    }
+                }
+            ]
+        },
+        {   
+            "operators": [
+                {   
+                    "opId": 10,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "catalog_sales",
+                        "userName": "valmeida"
+                    }
+                },
+                {   
+                    "opId": 11,
+                    "opType": "ShuffleProducer",
+                    "argChild": 10,
+                    "argPf": {
+                        "indexes": [
+                            16, 3
+                        ],
+                        "type": "MultiFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 12,
+                    "argOperatorId": 9,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 13,
+                    "argOperatorId": 11,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 14,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 12,
+                    "argChild2": 13,
+                    "argColumns1": [
+                        2, 3
+                    ],
+                    "argColumns2": [
+                        16, 3
+                    ],
+                    "argSelect1": [
+                        1, 2, 3, 4, 5
+                    ],
+                    "argSelect2": [
+                        0, 19
+                    ]
+                },
+                {
+                    "opId": 15,
+                    "argChild": 14,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 1,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 16,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "date_dim",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 17,
+                    "argChild": 16,
+                    "opType": "Filter",
+                    "argPredicate": {
+                        "rootExpressionOperator": {
+                            "type": "EQ",
+                            "right": {
+                                "type": "CONSTANT",
+                                "value": "1999Q1",
+                                "valueType": "STRING_TYPE"
+                            },
+                            "left": {
+                                "type": "VARIABLE",
+                                "columnIdx": 15
+                            }
+                        }
+                    }
+                },
+                {
+                    "opId": 18,
+                    "argChild": 17,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 19,
+                    "argOperatorId": 15,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 20,
+                    "argOperatorId": 18,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 21,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 19,
+                    "argChild2": 20,
+                    "argColumns1": [
+                        4
+                    ],
+                    "argColumns2": [
+                        0
+                    ],
+                    "argSelect1": [
+                        0, 1, 2, 3, 5
+                    ],
+                    "argSelect2": [
+                        0
+                    ]
+                },
+                {
+                    "opId": 22,
+                    "opType": "ShuffleProducer",
+                    "argChild": 21,
+                    "argPf": {
+                        "indexes": [
+                            1, 0, 2
+                        ],
+                        "type": "MultiFieldHash"
+                    }
+                }
+            ]    
+        },    
+        {
+            "operators": [
+                {
+                    "opId": 23,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "store_sales",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 24,
+                    "opType": "ShuffleProducer",
+                    "argChild": 23,
+                    "argPf": {
+                        "indexes": [
+                            3, 2, 9
+                        ],
+                        "type": "MultiFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 25,
+                    "argOperatorId": 22,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 26,
+                    "argOperatorId": 24,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 27,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 25,
+                    "argChild2": 26,
+                    "argColumns1": [
+                        1, 0, 2
+                    ],
+                    "argColumns2": [
+                        3, 2, 9
+                    ],
+                    "argSelect1": [
+                        3, 4
+                    ],
+                    "argSelect2": [
+                        0, 2, 7, 10
+                    ]
+                },
+                {
+                    "opId": 28,
+                    "argChild": 27,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 2,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 29,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "date_dim",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 30,
+                    "argChild": 29,
+                    "opType": "Filter",
+                    "argPredicate": {
+                        "rootExpressionOperator": {
+                            "type": "EQ",
+                            "right": {
+                                "type": "CONSTANT",
+                                "value": "1999Q1",
+                                "valueType": "STRING_TYPE"
+                            },
+                            "left": {
+                                "type": "VARIABLE",
+                                "columnIdx": 15
+                            }
+                        }
+                    }
+                },
+                {
+                    "opId": 31,
+                    "argChild": 30,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 32,
+                    "argOperatorId": 31,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 33,
+                    "argOperatorId": 28,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 34,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 32,
+                    "argChild2": 33,
+                    "argColumns1": [
+                        2
+                    ],
+                    "argColumns2": [
+                        0
+                    ],
+                    "argSelect1": [
+                        0, 1, 3, 4, 5
+                    ],
+                    "argSelect2": [
+                        0
+                    ]
+                },
+                {
+                    "opId": 35,
+                    "argChild": 34,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 2,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 36,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "store",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 37,
+                    "argChild": 36,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 38,
+                    "argOperatorId": 35,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 39,
+                    "argOperatorId": 37,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 40,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 38,
+                    "argChild2": 39,
+                    "argColumns1": [
+                        2
+                    ],
+                    "argColumns2": [
+                        0
+                    ],
+                    "argSelect1": [
+                        0, 1, 2, 4, 5
+                    ],
+                    "argSelect2": [
+                        25
+                    ]
+                },
+                {
+                    "opId": 41,
+                    "argChild": 40,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 2,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },        
+        {
+            "operators": [
+                {
+                    "opId": 42,
+                    "opType": "TableScan",
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "item",
+                        "userName": "valmeida"
+                    }
+                },
+                {
+                    "opId": 43,
+                    "argChild": 42,
+                    "opType": "ShuffleProducer",
+                    "argPf": {
+                        "index": 0,
+                        "type": "SingleFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 44,
+                    "argOperatorId": 41,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 45,
+                    "argOperatorId": 43,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 46,
+                    "opType": "SymmetricHashJoin",
+                    "argChild1": 44,
+                    "argChild2": 45,
+                    "argColumns1": [
+                        2
+                    ],
+                    "argColumns2": [
+                        0
+                    ],
+                    "argSelect1": [
+                        0, 1, 3, 4, 5
+                    ],
+                    "argSelect2": [
+                        1, 4
+                    ]
+                },
+                {
+                    "opId": 47,
+                    "opType": "ShuffleProducer",
+                    "argChild": 46,
+                    "argPf": {
+                        "indexes": [
+                            5, 6, 4
+                        ],
+                        "type": "MultiFieldHash"
+                    }
+                }
+            ]
+        },
+        {
+            "operators": [
+                {
+                    "opId": 48,
+                    "argOperatorId": 47,
+                    "opType": "ShuffleConsumer"
+                },
+                {
+                    "opId": 49,
+                    "argChild": 48,
+                    "opType": "MultiGroupByAggregate",
+                    "aggregators": [
+                       {
+                            "type": "SingleColumn",
+                            "column": 0,
+                            "aggOps" : ["COUNT", "AVG", "STDEV"]
+                       },
+                       {
+                            "type": "SingleColumn",
+                            "column": 1,
+                            "aggOps" : ["COUNT", "AVG", "STDEV"]
+                       },
+                       {
+                            "type": "SingleColumn",
+                            "column": 2,
+                            "aggOps" : ["COUNT", "AVG", "STDEV"]
+                       }
+                    ],
+                    "argGroupFields": [
+                        5, 6, 4
+                    ]
+                },
+                {
+                    "opId": 50,
+                    "opType":"InMemoryOrderBy",
+                    "argChild": 49,
+                    "argSortColumns": [
+                        5, 6, 4 
+                    ],
+                    "argAscending": [
+                        true, true, true
+                    ]
+                },
+                {
+                    "opId": 51,
+                    "opType": "DbInsert",
+                    "argChild": 50,
+                    "argOverwriteTable": true,
+                    "relationKey": {
+                        "programName": "tpc-h",
+                        "relationName": "result_query_18",
+                        "userName": "valmeida"
+                    }
+                }
+            ]
+        }
+    ],
+    "logicalRa": "Insert(smallTable_join_smallTable)[Join(1=0; [0,3])[Shuffle(1)[Scan], Shuffle(1)[Scan]]]",
+    "rawQuery": "smallTable_join_smallTable(x,z) :- smallTable(x,y), smallTable(y,z)",
+    "language": "datalog"
+}

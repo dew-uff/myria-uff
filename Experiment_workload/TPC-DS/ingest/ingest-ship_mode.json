@@ -1,0 +1,30 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "ship_mode",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "sm_ship_mode_sk",
+         "sm_ship_mode_id",
+         "sm_type",
+         "sm_code",
+         "sm_carrier",
+         "sm_contract"
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/ship_mode.dat"
+   }
+}

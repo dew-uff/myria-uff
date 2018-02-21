@@ -1,0 +1,36 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "customer_demographics",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "cd_demo_sk",
+         "cd_gender",
+         "cd_marital_status",
+         "cd_education_status",
+         "cd_purchase_estimate",
+         "cd_credit_rating",
+         "cd_dep_count",
+         "cd_dep_employed_count",
+         "cd_dep_college_count"
+      ],
+      "columnTypes": [
+         "LONG_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "INTEGER_TYPE",
+         "STRING_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/customer_demographics.dat"
+   }
+}

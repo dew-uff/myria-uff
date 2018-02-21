@@ -1,0 +1,38 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "catalog_page",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "cp_catalog_page_sk",       
+         "cp_catalog_page_id",       
+         "cp_start_date_sk",  
+         "cp_end_date_sk",    
+         "cp_department",        
+         "p_cost",           
+         "p_response_target",
+         "cp_catalog_number",     
+         "cp_catalog_page_number",  
+         "cp_description",  
+         "cp_type"   
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",       
+         "STRING_TYPE",       
+         "INTEGER_TYPE",  
+         "INTEGER_TYPE",    
+         "STRING_TYPE",        
+         "INTEGER_TYPE",           
+         "INTEGER_TYPE",
+         "STRING_TYPE",     
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/catalog_page.dat"
+   }
+}

@@ -1,0 +1,38 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "time_dim",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "t_time_sk",
+         "t_time_id",
+         "t_time",
+         "t_hour",
+         "t_minute",
+         "t_second",
+         "t_am_pm",
+         "t_shift",
+         "t_sub_shift",
+         "t_meal_time"
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",
+         "STRING_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE",
+         "INTEGER_TYPE"
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/time_dim.dat"
+   }
+}

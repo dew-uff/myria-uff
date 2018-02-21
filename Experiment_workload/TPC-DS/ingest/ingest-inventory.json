@@ -1,0 +1,26 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "inventory",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "inv_date_sk",       
+         "inv_item_sk",       
+         "inv_warehouse_sk",  
+         "inv_quantity_on_hand"   
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",       
+         "INTEGER_TYPE",  
+         "INTEGER_TYPE",    
+         "INTEGER_TYPE"           
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/inventory.dat"
+   }
+}

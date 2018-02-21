@@ -1,0 +1,24 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "reason",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "r_reason_sk",
+         "r_reason_id",
+         "r_reason_desc"
+      ],
+      "columnTypes": [
+         "INTEGER_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "tpcs/reason.dat"
+   }
+}
