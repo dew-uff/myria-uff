@@ -13,10 +13,10 @@
          "inv_quantity_on_hand"   
       ],
       "columnTypes": [
-         "INTEGER_TYPE",       
-         "INTEGER_TYPE",  
-         "INTEGER_TYPE",    
-         "INTEGER_TYPE"           
+         "INT_TYPE",       
+         "INT_TYPE",  
+         "INT_TYPE",    
+         "INT_TYPE"           
       ]
    },
    "source": {

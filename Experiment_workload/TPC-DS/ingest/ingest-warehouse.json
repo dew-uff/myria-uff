@@ -23,10 +23,10 @@
          "w_gmt_offset"
       ],
       "columnTypes": [
-         "INTEGER_TYPE",
+         "INT_TYPE",
          "STRING_TYPE",
          "STRING_TYPE",
-         "INTEGER_TYPE",
+         "INT_TYPE",
          "STRING_TYPE",
          "STRING_TYPE",
          "STRING_TYPE",

@@ -14,11 +14,11 @@
          "hd_vehicle_count"        
       ],
       "columnTypes": [
-         "INTEGER_TYPE",  
-         "INTEGER_TYPE",    
+         "INT_TYPE",  
+         "INT_TYPE",    
          "STRING_TYPE",           
-         "INTEGER_TYPE",       
-         "INTEGER_TYPE"
+         "INT_TYPE",       
+         "INT_TYPE"
       ]
    },
    "source": {

@@ -14,8 +14,8 @@
       ],
       "columnTypes": [
          "STRING_TYPE",
-         "DATE_TYPE",
-         "TIME_TYPE",
+         "DATETIME_TYPE",
+         "DATETIME_TYPE",
          "STRING_TYPE"
       ]
    },

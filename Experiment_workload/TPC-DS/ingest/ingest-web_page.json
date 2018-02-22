@@ -23,20 +23,20 @@
          "wp_max_ad_count"    
       ],
       "columnTypes": [
-         "INTEGER_TYPE",  
+         "INT_TYPE",  
          "STRING_TYPE",     
-         "DATE_TYPE",  
-         "DATE_TYPE",    
-         "INTEGER_TYPE",
-         "INTEGER_TYPE",  
+         "DATETIME_TYPE",  
+         "DATETIME_TYPE",    
+         "INT_TYPE",
+         "INT_TYPE",  
          "STRING_TYPE",    
-         "INTEGER_TYPE",     
+         "INT_TYPE",     
          "STRING_TYPE",             
          "STRING_TYPE",            
-         "INTEGER_TYPE",  
-         "INTEGER_TYPE",    
-         "INTEGER_TYPE",       
-         "INTEGER_TYPE"
+         "INT_TYPE",  
+         "INT_TYPE",    
+         "INT_TYPE",       
+         "INT_TYPE"
       ]
    },
    "source": {

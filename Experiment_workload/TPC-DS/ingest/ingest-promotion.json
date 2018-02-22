@@ -28,13 +28,13 @@
          "p_discount_active"   
       ],
       "columnTypes": [
-         "INTEGER_TYPE",       
+         "INT_TYPE",       
          "STRING_TYPE",       
-         "INTEGER_TYPE",  
-         "INTEGER_TYPE",    
-         "INTEGER_TYPE",        
+         "INT_TYPE",  
+         "INT_TYPE",    
+         "INT_TYPE",        
          "DOUBLE_TYPE",           
-         "INTEGER_TYPE",
+         "INT_TYPE",
          "STRING_TYPE",     
          "STRING_TYPE",  
          "STRING_TYPE",  

@@ -15,7 +15,7 @@
          "sm_contract"
       ],
       "columnTypes": [
-         "INTEGER_TYPE",
+         "INT_TYPE",
          "STRING_TYPE",
          "STRING_TYPE",
          "STRING_TYPE",
