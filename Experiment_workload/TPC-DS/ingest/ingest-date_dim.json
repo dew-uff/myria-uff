@@ -70,5 +70,6 @@
    "source": {
       "dataType": "File",
       "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/date_dim.dat"
-   }
+   },
+   "workers": [1,2]
 }

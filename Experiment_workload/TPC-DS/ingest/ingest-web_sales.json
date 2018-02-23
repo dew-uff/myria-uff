@@ -82,5 +82,6 @@
    "source": {
       "dataType": "File",
       "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/web_sales.dat"
-   }
+   },
+   "workers": [1,2]
 }

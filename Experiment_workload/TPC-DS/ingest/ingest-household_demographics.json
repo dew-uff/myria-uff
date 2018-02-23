@@ -24,5 +24,6 @@
    "source": {
       "dataType": "File",
       "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/household_demographics.dat"
-   }
+   },
+   "workers": [1,2]
 }

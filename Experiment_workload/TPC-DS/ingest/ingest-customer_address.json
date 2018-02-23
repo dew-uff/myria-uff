@@ -40,5 +40,6 @@
    "source": {
       "dataType": "File",
       "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/customer_address.dat"
-   }
+   },
+   "workers": [1,2]
 }
