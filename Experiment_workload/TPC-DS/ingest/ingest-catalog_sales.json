@@ -81,6 +81,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/catalog_sales.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/catalog_sales.dat"
    }
 }

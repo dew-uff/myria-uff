@@ -39,7 +39,7 @@
       "columnTypes": [
          "INT_TYPE",
          "STRING_TYPE",
-         "DATETIME_TYPE",
+         "STRING_TYPE",
          "INT_TYPE",
          "INT_TYPE",
          "INT_TYPE",
@@ -69,6 +69,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/date_dim.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/date_dim.dat"
    }
 }

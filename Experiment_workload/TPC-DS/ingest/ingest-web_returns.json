@@ -61,6 +61,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/web_returns.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/web_returns.dat"
    }
 }

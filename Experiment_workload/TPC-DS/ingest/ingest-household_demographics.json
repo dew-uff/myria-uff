@@ -23,6 +23,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/household_demographics.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/household_demographics.dat"
    }
 }

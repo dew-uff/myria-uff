@@ -19,6 +19,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/income_band.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/income_band.dat"
    }
 }

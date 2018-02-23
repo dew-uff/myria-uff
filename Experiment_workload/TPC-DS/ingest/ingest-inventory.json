@@ -21,6 +21,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/inventory.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/inventory.dat"
    }
 }

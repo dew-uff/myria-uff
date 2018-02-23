@@ -59,6 +59,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/store_sales.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/store_sales.dat"
    }
 }

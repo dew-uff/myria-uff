@@ -14,13 +14,13 @@
       ],
       "columnTypes": [
          "STRING_TYPE",
-         "DATETIME_TYPE",
-         "DATETIME_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
          "STRING_TYPE"
       ]
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/dbgen_version.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/dbgen_version.dat"
    }
 }

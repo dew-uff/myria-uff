@@ -33,6 +33,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/catalog_page.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/catalog_page.dat"
    }
 }

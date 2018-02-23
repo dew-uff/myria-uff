@@ -25,6 +25,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/ship_mode.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/ship_mode.dat"
    }
 }

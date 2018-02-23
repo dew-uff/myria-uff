@@ -31,6 +31,6 @@
    },
    "source": {
       "dataType": "File",
-      "filename": "tpcs/customer_demographics.dat"
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/tpcds-data/customer_demographics.dat"
    }
 }
