@@ -1,0 +1,32 @@
+{
+   "delimiter": "|", 
+   "relationKey": {
+      "programName": "tpcds", 
+      "relationName": "inventory", 
+      "userName": "valmeida"
+   }, 
+   "schema": {
+      "columnNames": [
+         "inv_date_sk", 
+         "inv_item_sk", 
+         "inv_warehouse_sk", 
+         "inv_quantity_on_hand"
+      ], 
+      "columnTypes": [
+         "INT_TYPE", 
+         "INT_TYPE", 
+         "INT_TYPE", 
+         "INT_TYPE"
+      ]
+   }, 
+   "source": {
+      "dataType": "File", 
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/data/inventory.dat_"
+   }, 
+   "workers": [
+      1, 
+      2, 
+      3, 
+      4
+   ]
+}

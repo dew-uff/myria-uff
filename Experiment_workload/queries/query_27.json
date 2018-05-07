@@ -1,0 +1,543 @@
+{
+   "fragments": [
+      {
+         "operators": [
+            {
+               "opId": 1, 
+               "opType": "TableScan", 
+               "relationKey": {
+                  "programName": "tpcds", 
+                  "relationName": "date_dim", 
+                  "userName": "valmeida"
+               }
+            }, 
+            {
+               "argChild": 1, 
+               "argPredicate": {
+                  "rootExpressionOperator": {
+                     "left": {
+                        "left": {
+                           "type": "CONSTANT", 
+                           "value": 2, 
+                           "valueType": "INT_TYPE"
+                        }, 
+                        "right": {
+                           "columnIdx": 10, 
+                           "type": "VARIABLE"
+                        }, 
+                        "type": "EQ"
+                     }, 
+                     "right": {
+                        "left": {
+                           "type": "CONSTANT", 
+                           "value": 2000, 
+                           "valueType": "INT_TYPE"
+                        }, 
+                        "right": {
+                           "columnIdx": 6, 
+                           "type": "VARIABLE"
+                        }, 
+                        "type": "EQ"
+                     }, 
+                     "type": "AND"
+                  }
+               }, 
+               "opId": 2, 
+               "opType": "Filter"
+            }, 
+            {
+               "argChild": 2, 
+               "argPf": {
+                  "index": 0, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 3, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "opId": 4, 
+               "opType": "TableScan", 
+               "relationKey": {
+                  "programName": "tpcds", 
+                  "relationName": "catalog_sales", 
+                  "userName": "valmeida"
+               }
+            }, 
+            {
+               "argChild": 4, 
+               "argPf": {
+                  "index": 0, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 5, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "argOperatorId": 3, 
+               "opId": 6, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argOperatorId": 5, 
+               "opId": 7, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argChild1": 6, 
+               "argChild2": 7, 
+               "argColumns1": [
+                  0
+               ], 
+               "argColumns2": [
+                  0
+               ], 
+               "argSelect1": [], 
+               "argSelect2": [
+                  3, 
+                  21
+               ], 
+               "opId": 8, 
+               "opType": "SymmetricHashJoin"
+            }, 
+            {
+               "argChild": 8, 
+               "argPf": {
+                  "index": 0, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 9, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "opId": 10, 
+               "opType": "TableScan", 
+               "relationKey": {
+                  "programName": "tpcds", 
+                  "relationName": "customer", 
+                  "userName": "valmeida"
+               }
+            }, 
+            {
+               "argChild": 10, 
+               "argPf": {
+                  "index": 0, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 11, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "argOperatorId": 9, 
+               "opId": 12, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argOperatorId": 11, 
+               "opId": 13, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argChild1": 12, 
+               "argChild2": 13, 
+               "argColumns1": [
+                  0
+               ], 
+               "argColumns2": [
+                  0
+               ], 
+               "argSelect1": [
+                  1
+               ], 
+               "argSelect2": [
+                  4
+               ], 
+               "opId": 14, 
+               "opType": "SymmetricHashJoin"
+            }, 
+            {
+               "argChild": 14, 
+               "argPf": {
+                  "index": 1, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 15, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "opId": 16, 
+               "opType": "TableScan", 
+               "relationKey": {
+                  "programName": "tpcds", 
+                  "relationName": "customer_address", 
+                  "userName": "valmeida"
+               }
+            }, 
+            {
+               "argChild": 16, 
+               "argPf": {
+                  "index": 0, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 17, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "argOperatorId": 15, 
+               "opId": 18, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argOperatorId": 17, 
+               "opId": 19, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argChild1": 18, 
+               "argChild2": 19, 
+               "argColumns1": [
+                  1
+               ], 
+               "argColumns2": [
+                  0
+               ], 
+               "argSelect1": [
+                  0
+               ], 
+               "argSelect2": [
+                  8, 
+                  9
+               ], 
+               "opId": 20, 
+               "opType": "SymmetricHashJoin"
+            }, 
+            {
+               "argChild": 20, 
+               "argPredicate": {
+                  "rootExpressionOperator": {
+                     "left": {
+                        "left": {
+                           "left": {
+                              "left": {
+                                 "left": {
+                                    "left": {
+                                       "left": {
+                                          "left": {
+                                             "left": {
+                                                "left": {
+                                                   "left": {
+                                                      "type": "CONSTANT", 
+                                                      "value": "81792", 
+                                                      "valueType": "STRING_TYPE"
+                                                   }, 
+                                                   "right": {
+                                                      "columnIdx": 2, 
+                                                      "type": "VARIABLE"
+                                                   }, 
+                                                   "type": "EQ"
+                                                }, 
+                                                "right": {
+                                                   "left": {
+                                                      "type": "CONSTANT", 
+                                                      "value": "80348", 
+                                                      "valueType": "STRING_TYPE"
+                                                   }, 
+                                                   "right": {
+                                                      "columnIdx": 2, 
+                                                      "type": "VARIABLE"
+                                                   }, 
+                                                   "type": "EQ"
+                                                }, 
+                                                "type": "OR"
+                                             }, 
+                                             "right": {
+                                                "left": {
+                                                   "type": "CONSTANT", 
+                                                   "value": "85460", 
+                                                   "valueType": "STRING_TYPE"
+                                                }, 
+                                                "right": {
+                                                   "columnIdx": 2, 
+                                                   "type": "VARIABLE"
+                                                }, 
+                                                "type": "EQ"
+                                             }, 
+                                             "type": "OR"
+                                          }, 
+                                          "right": {
+                                             "left": {
+                                                "type": "CONSTANT", 
+                                                "value": "85392", 
+                                                "valueType": "STRING_TYPE"
+                                             }, 
+                                             "right": {
+                                                "columnIdx": 2, 
+                                                "type": "VARIABLE"
+                                             }, 
+                                             "type": "EQ"
+                                          }, 
+                                          "type": "OR"
+                                       }, 
+                                       "right": {
+                                          "left": {
+                                             "type": "CONSTANT", 
+                                             "value": "86475", 
+                                             "valueType": "STRING_TYPE"
+                                          }, 
+                                          "right": {
+                                             "columnIdx": 2, 
+                                             "type": "VARIABLE"
+                                          }, 
+                                          "type": "EQ"
+                                       }, 
+                                       "type": "OR"
+                                    }, 
+                                    "right": {
+                                       "left": {
+                                          "type": "CONSTANT", 
+                                          "value": "83405", 
+                                          "valueType": "STRING_TYPE"
+                                       }, 
+                                       "right": {
+                                          "columnIdx": 2, 
+                                          "type": "VARIABLE"
+                                       }, 
+                                       "type": "EQ"
+                                    }, 
+                                    "type": "OR"
+                                 }, 
+                                 "right": {
+                                    "left": {
+                                       "type": "CONSTANT", 
+                                       "value": "88274", 
+                                       "valueType": "STRING_TYPE"
+                                    }, 
+                                    "right": {
+                                       "columnIdx": 2, 
+                                       "type": "VARIABLE"
+                                    }, 
+                                    "type": "EQ"
+                                 }, 
+                                 "type": "OR"
+                              }, 
+                              "right": {
+                                 "left": {
+                                    "type": "CONSTANT", 
+                                    "value": "86197", 
+                                    "valueType": "STRING_TYPE"
+                                 }, 
+                                 "right": {
+                                    "columnIdx": 2, 
+                                    "type": "VARIABLE"
+                                 }, 
+                                 "type": "EQ"
+                              }, 
+                              "type": "OR"
+                           }, 
+                           "right": {
+                              "left": {
+                                 "type": "CONSTANT", 
+                                 "value": "85669", 
+                                 "valueType": "STRING_TYPE"
+                              }, 
+                              "right": {
+                                 "columnIdx": 2, 
+                                 "type": "VARIABLE"
+                              }, 
+                              "type": "EQ"
+                           }, 
+                           "type": "OR"
+                        }, 
+                        "right": {
+                           "left": {
+                              "left": {
+                                 "left": {
+                                    "type": "CONSTANT", 
+                                    "value": "GA", 
+                                    "valueType": "STRING_TYPE"
+                                 }, 
+                                 "right": {
+                                    "columnIdx": 1, 
+                                    "type": "VARIABLE"
+                                 }, 
+                                 "type": "EQ"
+                              }, 
+                              "right": {
+                                 "left": {
+                                    "type": "CONSTANT", 
+                                    "value": "WA", 
+                                    "valueType": "STRING_TYPE"
+                                 }, 
+                                 "right": {
+                                    "columnIdx": 1, 
+                                    "type": "VARIABLE"
+                                 }, 
+                                 "type": "EQ"
+                              }, 
+                              "type": "OR"
+                           }, 
+                           "right": {
+                              "left": {
+                                 "type": "CONSTANT", 
+                                 "value": "CA", 
+                                 "valueType": "STRING_TYPE"
+                              }, 
+                              "right": {
+                                 "columnIdx": 1, 
+                                 "type": "VARIABLE"
+                              }, 
+                              "type": "EQ"
+                           }, 
+                           "type": "OR"
+                        }, 
+                        "type": "OR"
+                     }, 
+                     "right": {
+                        "left": {
+                           "type": "CONSTANT", 
+                           "value": 500, 
+                           "valueType": "INT_TYPE"
+                        }, 
+                        "right": {
+                           "columnIdx": 0, 
+                           "type": "VARIABLE"
+                        }, 
+                        "type": "GT"
+                     }, 
+                     "type": "OR"
+                  }
+               }, 
+               "opId": 21, 
+               "opType": "Filter"
+            }, 
+            {
+               "argChild": 21, 
+               "argPf": {
+                  "index": 1, 
+                  "type": "SingleFieldHash"
+               }, 
+               "opId": 22, 
+               "opType": "ShuffleProducer"
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }, 
+      {
+         "operators": [
+            {
+               "argOperatorId": 22, 
+               "opId": 23, 
+               "opType": "ShuffleConsumer"
+            }, 
+            {
+               "argAggFields": [
+                  0
+               ], 
+               "argAggOperators": [
+                  [
+                     "AGG_OP_AVG"
+                  ]
+               ], 
+               "argChild": 23, 
+               "argGroupField": 2, 
+               "opId": 24, 
+               "opType": "SingleGroupByAggregate"
+            }, 
+            {
+               "argAscending": [
+                  true
+               ], 
+               "argChild": 24, 
+               "argSortColumns": [
+                  0
+               ], 
+               "opId": 25, 
+               "opType": "InMemoryOrderBy"
+            }, 
+            {
+               "argChild": 25, 
+               "argOverwriteTable": true, 
+               "opId": 26, 
+               "opType": "DbInsert", 
+               "relationKey": {
+                  "programName": "tpcds", 
+                  "relationName": "result_query27", 
+                  "userName": "valmeida"
+               }
+            }
+         ], 
+         "workers": [
+            1, 
+            2, 
+            3, 
+            4
+         ]
+      }
+   ], 
+   "logicalRa": "Insert(smallTable_join_smallTable)[Join(1=0; [0,3])[Shuffle(1)[Scan], Shuffle(1)[Scan]]]", 
+   "rawDatalog": "smallTable_join_smallTable(x,z) :- smallTable(x,y), smallTable(y,z)"
+}

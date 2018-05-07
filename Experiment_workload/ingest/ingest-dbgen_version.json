@@ -1,0 +1,27 @@
+{
+   "delimiter": "|",
+   "relationKey": {
+      "programName": "tpcds",
+      "relationName": "dbgen_version",
+      "userName": "valmeida"
+   },
+   "schema": {
+      "columnNames": [
+         "dv_version",
+         "dv_create_date",
+         "dv_create_time",
+         "dv_cmdline_args"
+      ],
+      "columnTypes": [
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE",
+         "STRING_TYPE"
+      ]
+   },
+   "source": {
+      "dataType": "File",
+      "filename": "/home/frankwrs/myria/jsonQueries/tpcds/ingest/data/small-dbgen_version.dat_"
+   },
+   "workers": [1,2]
+}

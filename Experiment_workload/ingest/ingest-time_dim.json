@@ -1,0 +1,44 @@
+{
+   "delimiter": "|", 
+   "relationKey": {
+      "programName": "tpcds", 
+      "relationName": "time_dim", 
+      "userName": "valmeida"
+   }, 
+   "schema": {
+      "columnNames": [
+         "t_time_sk", 
+         "t_time_id", 
+         "t_time", 
+         "t_hour", 
+         "t_minute", 
+         "t_second", 
+         "t_am_pm", 
+         "t_shift", 
+         "t_sub_shift", 
+         "t_meal_time"
+      ], 
+      "columnTypes": [
+         "INT_TYPE", 
+         "STRING_TYPE", 
+         "INT_TYPE", 
+         "INT_TYPE", 
+         "INT_TYPE", 
+         "INT_TYPE", 
+         "STRING_TYPE", 
+         "STRING_TYPE", 
+         "STRING_TYPE", 
+         "STRING_TYPE"
+      ]
+   }, 
+   "source": {
+      "dataType": "File", 
+      "filename": "/home_nfs/frankwrs/myria/jsonQueries/tpcds/ingest/data/time_dim.dat_"
+   }, 
+   "workers": [
+      1, 
+      2, 
+      3, 
+      4
+   ]
+}
