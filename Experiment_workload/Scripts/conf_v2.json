@@ -1,0 +1,17 @@
+{
+	"pwd":"/home_nfs/frankwrs/",
+	"pathDN": "/var/usuarios/frankwrs/DN",
+	"queries": [
+		{"name": "query_7", "tables":["store_sales", "customer_demographics", "date_dim", "store", "item"]},
+		{"name": "query_15", "tables":["catalog_sales","customer_demographics","customer","customer_address","date_dim","item"]},
+		{"name": "query_17", "tables":["call_center","catalog_returns","date_dim","customer","customer_address","customer_demographics","household_demographics"]},
+		{"name": "query_19", "tables":["store_sales","household_demographics","time_dim","store"]},
+		{"name": "query_25", "tables":["store_sales","store_returns","catalog_sales","date_dim","store","item"]},
+		{"name": "query_26", "tables":["store_sales", "store", "customer_demographics", "customer_address", "date_dim"]},
+		{"name": "query_27", "tables":["catalog_sales","customer","customer_address","date_dim"]},
+		{"name": "query_29", "tables":["store_sales","customer_demographics","date_dim","item","promotion"]},
+		{"name": "query_48", "tables":["catalog_sales","customer_demographics","date_dim","item","promotion"]},
+		{"name": "query_91", "tables":["date_dim","store_sales","item","customer","customer_address","store"]},
+		{"name": "query_96", "tables":["store_sales","store_returns","catalog_sales","date_dim","store","item"]}
+	]
+}
