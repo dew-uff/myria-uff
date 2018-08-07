@@ -11,31 +11,42 @@ import os
 import time
 import datetime
 import sys
+from threading import Timer
 
 #funcao para escrever em arquivo de log
 def writeLog(pwd,log):
-	with open(pwd+'/logRunMyria4DN', 'a') as file:
-		file.write(log+'\n')
+	file = open(pwd+'/logRunMyria4DN', 'a')
+	file.write(log+'\n')
+	file.close()
+	#with open(pwd+'/logRunMyria4DN', 'a') as file:
+	#	file.write(log+'\n')
 
 #funcao para ler JSON com configurações iniciais
 def getIniConf(conf):
-	with open(conf) as fileconf:
-		data = json.load(fileconf)
+	#with open(conf) as fileconf:
+	#	data = json.load(fileconf)
+	fileconf = open(conf)
+	data = json.load(fileconf)
+	fileconf.close()
 	return data
 
 #funcao para escrever em json
 def writeJson(path,js):
-	#file = open(path, 'w')
+	file = open(path, 'w')
 	#file.write(json.dumps(js,indent = 3,sort_keys=True))
-	#file.close()
-	with open(path, 'w') as file:
-		json.dump(js, file, indent = 3,sort_keys=True)
+	json.dump(js, file, indent = 3,sort_keys=True)
+	file.close()
+	#with open(path, 'w') as file:
+		#json.dump(js, file, indent = 3,sort_keys=True)
 
 #funcao para alterar o json da consulta
 def alter_join(dn,wn,path,file):
 	path_ = path+'jsonQueries/tpcds/queries4DN/'+file+'.json'
-	with open(path_) as query:
-		data = json.load(query)
+	query = open(path_)
+	data = json.load(query)
+	query.close()
+	#with open(path_) as query:
+	#	data = json.load(query)
 	for frag in data['fragments']:
 		for op in frag['operators']:
 			if (op['opType'] == 'CollectConsumer'):
@@ -53,8 +64,11 @@ def alter_ingest(dn,path,filesIngest):
 	for file in filesIngest:
 		#file = filesIngest
 		path_ = path+'jsonQueries/tpcds/ingest4DN/ingest-'+file+'.json'
-		with open(path_) as ingest:
-			data = json.load(ingest)
+		ingest = open(path_)
+		data = json.load(ingest)
+		ingest.close()
+		#with open(path_) as ingest:
+		#	data = json.load(ingest)
 		try:
 			if data['numShards']:
 				del data['numShards']
@@ -72,7 +86,7 @@ def alter_ingest(dn,path,filesIngest):
 				del data['workers']
 		except KeyError: True
 		data['workers'] = dn
-		data['source']['filename'] = path+'jsonQueries/tpcds/ingest4DN/data_50/'+file+'.dat_'
+		data['source']['filename'] = path+'jsonQueries/tpcds/ingest4DN/data_40/'+file+'.dat_'
 		#data['source']['filename'] = path+'jsonQueries/tpcds/ingest/data_100/'+file+'.dat_'
 		#data['source']['filename'] = path+'jsonQueries/tpcds/ingest/data-small/small-'+file+'.dat_'
 		writeJson(path_,data)
@@ -94,9 +108,18 @@ def ingest_and_query(schema,path,fileQuery,filesIngest):
 
 #funcao para executar comandos shell
 def callCmdShell(cmd):
-	pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
-	outPipe, stderr = pipe.communicate()
-	return outPipe
+	#pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
+	#outPipe, stderr = pipe.communicate()
+	#return outPipe
+        pipe = subp.Popen(cmd, stdout=subp.PIPE,stderr=subp.PIPE,shell=True,universal_newlines=True)
+        kill = lambda process: process.kill()
+        timer = Timer(1800, kill, [pipe])
+        try:
+                timer.start()
+                outPipe, stderr = pipe.communicate()
+        finally:
+                timer.cancel()
+        return outPipe
 
 #funcao que executa chama o ingest e retorna um json
 def callIngest(cmd):
@@ -175,8 +198,9 @@ def prepareDeploy(path, master,listDeploy,port,s):
 	#hs = 16//((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) 
 	#hs = 2;
 	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) == 1): hs = 8; 
-	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) > 1): hs = 4; 
-	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) > 3): hs = 2; 
+	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) == 2): hs = 5; 
+	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) > 2): hs = 3; 
+	if (((s['schema']['dn']+s['schema']['wn'])/s['schema']['m']) > 4): hs = 2; 
 	#idx = lines.index('max_heap_size=')
 	#del lines [9]
 	lines[9] = 'max_heap_size=-Xmx'+str(hs)+'g\n'
@@ -325,7 +349,7 @@ def main(fileconf):
 	#gera cenarios
 	sample = 'WORLKLOAD-4DN'
 	schemas = getSchemas(len(listDN),len(listMaq)/len(listDN))
-	#schemas = [{'m':4,'dn':4,'wn':0}]
+	#schemas = [{'wn':0,'dn':4,'m':4,'type':'baseline'},{'wn':4,'dn':4,'m':4,'type':'evaluation'},{'wn':12,'dn':4,'m':4,'type':'evaluation'}]
 
 	#Define nome do arquivo com resultados
 	nameFileResult = config['pwd']+'Experiment_workload/Results/'+sample+'_'+str(time.strftime("%d%b%Y-%Hh%Mm%Ss"))+'.json'
@@ -369,11 +393,22 @@ def main(fileconf):
 			#Faz deploy do myria
 			timeQuery=[]
 			for query in config["queries"]:
+				#if ((query['name'] == 'query_96') and (nosTotais == (s['schema']['m']*8))): 
+					#break
 				print("###Working on query: "+query['name'])
 				writeLog(config['pwd'],"### Working on query: "+query['name'])
 				
 				errorDeploy = True
+				err = 0
 				while errorDeploy:
+
+					print("### MAIN TRY: "+str(err+1))
+					writeLog(config['pwd'],"### MAIN TRY:"+str(err+1))
+					if (err>5): 
+						timeQuery.append({'query':f,'start':0,'end':0,'time': 0})
+						errorDeploy = False
+						queryERROR = False
+						break
 
 					#Deploy Myria
 					errorDeploy = deployMyria(True, True, True, True, config['pwd'], master, listDN, s)
@@ -391,123 +426,138 @@ def main(fileconf):
 
 						for f in query['tables']:
 							if errorDeploy: break
+							c = 0
 							print("Start ingest - "+f+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-							writeLog(config['pwd'],"Start ingest - "+f+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+							writeLog(config['pwd'],"Start ingest - try: "+str(c)+" - "+f+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
 							#for f in filesIngest:
 							#pipe Ingest
 							ingest = ['curl -i -XPOST '+master+':8753/dataset -H \"Content-type: application/json\" -d @./ingest-'+f+'.json']
 							outIngest = callIngest(ingest)
-							c = 0
 							while isinstance(outIngest,str):
 								c += 1
-								writeLog(config['pwd'],"ERRO INGEST - "+f+"\n"+outIngest)
+								writeLog(config['pwd'],"ERRO INGEST - "+f+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss"))+"\n"+outIngest)
 								print("ERRO INGEST - "+f+"\n"+outIngest)
-								if (c>2): 
+								if (c>1): 
 									errorDeploy = True
 									break
-								else: outIngest = callIngest(ingest)
+								else: 
+									writeLog(config['pwd'],"Start ingest - try: "+str(c)+" - "+f+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+									outIngest = callIngest(ingest)
 							#rint('Ingest completo: '+f)
 							print "Finish ingest - "+f
 							writeLog(config['pwd'],"Finish ingest - "+f)
 
-					if not errorDeploy:					
-						#seta o diretorio das queries
-						os.chdir(path+"jsonQueries/tpcds/queries4DN")
+					if not errorDeploy:
+						queryERROR = True
+						i = 0
+						err += 1
+						while (queryERROR and i < 3):
+							#seta o diretorio das queries
+							os.chdir(path+"jsonQueries/tpcds/queries4DN")
 	
-						#Inicio da submissão de consulta
-						queryERROR = False
-						f = query['name']
-						print("Submit query "+f+" - step: "+str(x))
-						if queryERROR: break
-						while True:
-							#time.sleep(5)
-							writeLog(config['pwd'],"Submit query "+f+" - "+str(x))
-							cmd = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\" -d @./'+f+'.json']
-							#print(cmd)
-							sq, outQuery = callQuery(cmd)
-							if sq == 'ok':
-								if outQuery["status"] == "ACCEPTED":
-									qID = outQuery['queryId']
-									queryERROR = False
-									print(f+": "+outQuery['status']+" - ID: "+str(outQuery['queryId']))
-									writeLog(config['pwd'],f+": "+outQuery['status']+" - ID: "+str(outQuery['queryId']))
-									break
+							#Inicio da submissão de consulta
+							#queryERROR = False
+							f = query['name']
+							print("Submit query "+f+" - step: "+str(x)+" - try: "+str(i))
+							while True:
+								#time.sleep(5)
+								#if queryERROR: break
+								writeLog(config['pwd'],"Submit query "+f+" - "+str(x)+" - try: "+str(i))
+								cmd = ['curl -i -XPOST '+master+':8753/query -H \"Content-type: application/json\" -d @./'+f+'.json']
+								#print(cmd)
+								sq, outQuery = callQuery(cmd)
+								if sq == 'ok':
+									if outQuery["status"] == "ACCEPTED":
+										qID = outQuery['queryId']
+										queryERROR = False
+										errorDeploy = False
+										print(f+": "+outQuery['status']+" - ID: "+str(outQuery['queryId']))
+										writeLog(config['pwd'],f+": "+outQuery['status']+" - ID: "+str(outQuery['queryId']))
+										break
+									else:
+										errorDeploy = True
+										queryERROR = True
+										i+=1
+										print("QUERY NOT SUCESS: "+outQuery['status'])
+										writeLog(config['pwd'],"QUERY NOT SUCESS: "+outQuery['status'])
+										break
 								else:
 									errorDeploy = True
 									queryERROR = True
-									print("QUERY NOT SUCESS: "+outQuery['status'])
-									writeLog(config['pwd'],"QUERY NOT SUCESS: "+outQuery['status'])
+									i+=1
+									print("QUERY ERROR: \n"+outQuery)
+									writeLog(config['pwd'],"QUERY ERROR: \n"+outQuery)
 									break
-							else:
-								errorDeploy = True
-								queryERROR = True
-								print("QUERY ERROR: \n"+outQuery)
-								writeLog(config['pwd'],"QUERY ERROR: \n"+outQuery)
-								break
 
-						if not queryERROR:
-							#coletando tempo de consulta
-							print "Get query time "+f+" - step: "+str(x)
-							writeLog(config['pwd'],"Get query time "+f+" - step: "+str(x))
-							#pipe query time
-							time.sleep(5)
-							getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(qID)
-							#print(getQuery)
-							sq, outGetQuery = callQuery(getQuery)
-							getStart = datetime.datetime.now()
-							#outQ[i]=outGetQuery	
-							#print(outGetQuery)
-							#st = datetime.datetime.now()
-							if sq == 'ok':
-								if (outGetQuery['status'] == 'SUCCESS'):
-									print(f+": "+outGetQuery['status'])
-									writeLog(config['pwd'],f+": "+outGetQuery['status'])
-                                                                       	#print(outGetQuery)
-                                                                       	queryERROR = False
-								else:
-									while (outGetQuery['status']):
-										print(f+": "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-										writeLog(config['pwd'],f+": "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-										if outGetQuery['status'] == 'SUCCESS':
-											print(f+": "+outGetQuery['status'])
-											writeLog(config['pwd'],f+": "+outGetQuery['status'])
-											#print(outGetQuery)
-											queryERROR = False
-											break
-										elif outGetQuery['status'] == 'RUNNING':
-											a = (datetime.datetime.now() - getStart).seconds
-											time.sleep(60)
-											if (a > 1800):
+							if not queryERROR:
+								#coletando tempo de consulta
+								print "Get query time "+f+" - step: "+str(x)
+								writeLog(config['pwd'],"Get query time "+f+" - step: "+str(x))
+								#pipe query time
+								time.sleep(5)
+								getQuery = 'curl -i -XGET '+master+':8753/query/query-'+str(qID)
+								#print(getQuery)
+								sq, outGetQuery = callQuery(getQuery)
+								getStart = datetime.datetime.now()
+								#outQ[i]=outGetQuery	
+								#print(outGetQuery)
+								#st = datetime.datetime.now()
+								if sq == 'ok':
+									if (outGetQuery['status'] == 'SUCCESS'):
+										print(f+": "+outGetQuery['status'])
+										writeLog(config['pwd'],f+": "+outGetQuery['status'])
+                                                	                       	#print(outGetQuery)
+                                                        	               	queryERROR = False
+										errorDeploy = False
+									else:
+										while (outGetQuery['status']):
+											print(f+": "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+											writeLog(config['pwd'],f+": "+outGetQuery['status']+" - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+											if outGetQuery['status'] == 'SUCCESS':
+												print(f+": "+outGetQuery['status'])
+												writeLog(config['pwd'],f+": "+outGetQuery['status'])
+												#print(outGetQuery)
+												queryERROR = False
+												errorDeploy = False
+												break
+											elif outGetQuery['status'] == 'RUNNING':
+												a = (datetime.datetime.now() - getStart).seconds
+												time.sleep(60)
+												if (a > 5400):
+													queryERROR = True
+													errorDeploy = True
+													i+=1
+													print("Stoping query "+f+" by outtime: "+str(a))
+													writeLog(config['pwd'],"Sotping query "+f+" by outtime: "+str(a))
+													break
+												else:
+													time.sleep(10)
+													sq, outGetQuery = callQuery(getQuery)
+													while sq == 'error':
+														#totaltime = (datetime.datetime.now() - st).total_seconds()
+														print("Bug Myria, sleeping...  - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+														writeLog(config['pwd'],"Bug Myria, sleeping...  - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
+														#time.sleep(720)
+														i+=1
+														#Deploy Myria
+														errorDeploy = True
+														while errorDeploy:
+															errorDeploy = deployMyria(True, False, False, True, config['pwd'], master, listDN,s)
+															sq, outGetQuery = callQuery(getQuery)
+											else:
+												print(f+": "+outGetQuery['status'])
+												writeLog(config['pwd'],f+": "+str(outGetQuery))
 												queryERROR = True
 												errorDeploy = True
-												print("Stoping query "+f+" by outtime: "+str(a))
-												writeLog(config['pwd'],"Sotping query "+f+" by outtime: "+str(a))
+												i+=1
 												break
-											else:
-												time.sleep(10)
-												sq, outGetQuery = callQuery(getQuery)
-												while sq == 'error':
-													#totaltime = (datetime.datetime.now() - st).total_seconds()
-													print("Bug Myria, sleeping...  - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-													writeLog(config['pwd'],"Bug Myria, sleeping...  - "+str(time.strftime("%d-%b-%Y-%Hh%Mm%Ss")))
-													time.sleep(720)
-													#Deploy Myria
-													errorDeploy = True
-													while errorDeploy:
-														errorDeploy = deployMyria(True, False, False, True, path, master, listDN,s)
-														sq, outGetQuery = callQuery(getQuery)
-										else:
-											print(f+": "+outGetQuery['status'])
-											writeLog(config['pwd'],f+": "+str(outGetQuery))
-											queryERROR = True
-											errorDeploy = True
-											break
-							else:
-								queryERROR = True
-								errorDeploy = True
-								print("QUERY ERROR: \n"+str(outGetQuery))
-								writeLog(config['pwd'],"QUERY ERROR: \n"+str(outGetQuery))
-								break
+								else:
+									queryERROR = True
+									errorDeploy = True
+									i+=1
+									print("QUERY ERROR: \n"+str(outGetQuery))
+									writeLog(config['pwd'],"QUERY ERROR: \n"+str(outGetQuery))
+									break
 						#print(outQ)
 	
 						if (not queryERROR) and (not errorDeploy):
